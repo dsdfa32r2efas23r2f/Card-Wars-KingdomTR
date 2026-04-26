@@ -1145,6 +1145,64 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		SaveData.ExpeditionSlots = ExpeditionParams.StartingExpeditionSlots;
 		SaveData.RandomDungeonLevel = 1;
 		DetachedSingleton<MissionManager>.Instance.Init();
+		ApplyDebugUnlockedProfileBypassForNewLocalSave();
+	}
+
+	// TODO_REMOVE_AFTER_REFAC: remove once proper debug profile/bootstrap flow exists.
+	private void ApplyDebugUnlockedProfileBypassForNewLocalSave()
+	{
+		// Mark tutorial blocks as completed and clear active tutorial states.
+		TutorialDataManager.Instance.DebugCompleteAllTutorials(false);
+		StateData.ActiveTutorialState = null;
+		StateData.ActiveConditionalState = null;
+
+		// Max out rank to unlock all rank-gated buildings/lab features in town intro pipeline.
+		int targetRankLevel = 1;
+		List<PlayerRankData> rankRows = PlayerRankDataManager.Instance.GetDatabase();
+		if (rankRows != null && rankRows.Count > 0)
+		{
+			targetRankLevel = rankRows.Count;
+		}
+		int targetRankXp = GetXpToReachRank(targetRankLevel);
+		if (targetRankXp >= 0)
+		{
+			SaveData.RankXP = targetRankXp;
+			RefreshRankXpData();
+			SaveData.PlayersLastSavedLevel = RankXpLevelData.mCurrentLevel;
+		}
+
+		// Mark mainline quest progress high so quest gating does not force early-game path.
+		int maxMainlineQuestId = 0;
+		List<QuestData> allQuests = QuestDataManager.Instance.GetDatabase();
+		for (int i = 0; i < allQuests.Count; i++)
+		{
+			int questId = allQuests[i].GetIntQuestId();
+			if (questId > maxMainlineQuestId)
+			{
+				maxMainlineQuestId = questId;
+			}
+		}
+		SaveData.TopCompletedQuestId = maxMainlineQuestId;
+		SaveData.TopShownCompletedQuestId = maxMainlineQuestId;
+
+		// Pre-unlock all rank-defined features now, before town unlock effects run.
+		List<PlayerRankData> unlockRanks = PlayerRankDataManager.Instance.UnlockRanks;
+		if (unlockRanks != null)
+		{
+			for (int j = 0; j < unlockRanks.Count; j++)
+			{
+				PlayerRankData unlockRank = unlockRanks[j];
+				if (unlockRank.UnlockType != 0 && !string.IsNullOrEmpty(unlockRank.UnlockId))
+				{
+					UnlockFeature(unlockRank.UnlockId);
+				}
+			}
+		}
+
+		Debug.LogWarning("[DEBUG_PROFILE_BYPASS] Local profile converted to unlocked profile. " +
+			"Rank=" + SaveData.PlayersLastSavedLevel +
+			", TopQuest=" + SaveData.TopCompletedQuestId +
+			", Unlocks=" + SaveData.Unlocks.Count);
 	}
 
 	private string SerializeUnlocks()
@@ -2179,6 +2237,8 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		{
 			Singleton<PlayerInfoScript>.Instance.InitNewSaveFile();
 		}
+		// TODO_REMOVE_AFTER_REFAC: apply same debug bypass to existing local saves too.
+		Singleton<PlayerInfoScript>.Instance.ApplyDebugUnlockedProfileBypassForNewLocalSave();
 		DetachedSingleton<MissionManager>.Instance.AssignGlobalMissions();
 	}
 
