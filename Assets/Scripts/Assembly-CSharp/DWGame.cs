@@ -386,6 +386,7 @@ public class DWGame : Singleton<DWGame>
 			int targetLane = CurrentBoardState.GetPlayerState(PlayerType.User).GetTargetLane();
 			Singleton<MultiplayerMessageHandler>.Instance.SendCardPlay(Card, targetPlayer, LaneIndex1, targetLane);
 		}
+		SyncRefactorActionPointSpendForUser(WhichPlayer, Card.Cost, "PlayActionCard");
 		MasterBoardState.PlayActionCard(WhichPlayer, Card, targetPlayer, LaneIndex1);
 		Card.AlreadySeen = true;
 	}
@@ -404,6 +405,7 @@ public class DWGame : Singleton<DWGame>
 		else
 		{
 			creatureState = MasterBoardState.DeployCreature(player, creature, laneIndex);
+			SyncRefactorActionPointSpendForUser(player, creature.DeployCost, "DeployCreature");
 			if (player == PlayerType.User)
 			{
 				WaitingForCreatureDeployAfterRevive = false;
@@ -1504,6 +1506,20 @@ public class DWGame : Singleton<DWGame>
 			return false;
 		}
 		return mBattleRefactorFacade.TrySpendUserActionPoints(amount);
+	}
+
+	// TODO_REFAC: remove once AP source-of-truth is fully moved to battle-core.
+	private void SyncRefactorActionPointSpendForUser(PlayerType player, int cost, string source)
+	{
+		if (player != PlayerType.User || cost <= 0 || mBattleRefactorFacade == null)
+		{
+			return;
+		}
+		bool applied = TrySpendUserActionPointsRefactor(cost);
+		if (!applied)
+		{
+			Debug.LogWarning("[REFAC_AP_SYNC] Failed to apply AP spend in battle-core facade. source=" + source + ", cost=" + cost);
+		}
 	}
 
 	public void RevivePlayer()
