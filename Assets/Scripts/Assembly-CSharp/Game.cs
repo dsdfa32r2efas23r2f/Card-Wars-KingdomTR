@@ -3,71 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using MiniJSON;
 using UnityEngine;
 
 public class Game
 {
-	private class GameCrypto
-	{
-		public const string PlayerPrefsIndexKey = "BattleTeamInstance";
-
-		private static readonly int[] SWIZZLE_BYTEMAP = new int[8] { 21, 9, 17, 19, 3, 28, 4, 11 };
-
-		private static readonly string[] masks = new string[12]
-		{
-			"Lorem ipsum dolor sit amet", "consectetur adipisicing elit", "sed do eiusmod tempor incididunt ut labore", "et dolore magna aliqua", "Ut enim ad minim veniam", "quis nostrud exercitation ullamco laboris nisi", "ut aliquip ex ea commodo consequat", "Duis aute irure dolor in reprehenderit in voluptate ", "velit esse cillum dolore eu fugiat nulla pariatur", "Excepteur sint occaecat cupidatat non proident ",
-			"sunt in culpa qui officia deserunt", "mollit anim id est laborum"
-		};
-
-		private static string GetMask()
-		{
-			if (PlayerPrefs.HasKey("BattleTeamInstance"))
-			{
-				int @int = PlayerPrefs.GetInt("BattleTeamInstance");
-				SwizzleCrypto swizzleCrypto = new SwizzleCrypto(SWIZZLE_BYTEMAP);
-				byte b = swizzleCrypto.DecryptByte((uint)@int);
-				TFUtils.Assert(b < masks.Length, "Issue getting encryption key, index out of range");
-				return masks[b];
-			}
-			TFUtils.Assert(false, "Don't call this all willy nilly without actually having a saved key");
-			return string.Empty;
-		}
-
-		public static void EncryptAndSave(string filename, string contents, bool forceGenNewKey = false)
-		{
-			string empty = string.Empty;
-			int num = -1;
-			if (!forceGenNewKey && PlayerPrefs.HasKey("BattleTeamInstance"))
-			{
-				empty = GetMask();
-				num = PlayerPrefs.GetInt("BattleTeamInstance");
-			}
-			else
-			{
-				int num2 = UnityEngine.Random.Range(0, masks.Length);
-				empty = masks[num2];
-				SwizzleCrypto swizzleCrypto = new SwizzleCrypto(SWIZZLE_BYTEMAP);
-				num = (int)swizzleCrypto.Encrypt((byte)num2);
-			}
-			XorCrypto xorCrypto = new XorCrypto(empty);
-			string data = xorCrypto.Encrypt(contents);
-			TFUtils.WriteFile(filename, data);
-			PlayerPrefs.SetInt("BattleTeamInstance", num);
-			PlayerPrefs.Save();
-		}
-
-		public static string Decrypt(string contents)
-		{
-			if (PlayerPrefs.HasKey("BattleTeamInstance"))
-			{
-				string mask = GetMask();
-				XorCrypto xorCrypto = new XorCrypto(mask);
-				return xorCrypto.Decrypt(contents);
-			}
-			return contents;
-		}
-	}
-
 	private const string GAME_FILE = "game.json";
 
 	private string gameFile;
@@ -357,8 +297,9 @@ public class Game
 	{
 		if (gameFile != null)
 		{
-			Debug.Log("Game.SaveLocally: " + json_gamestate);
-			GameCrypto.EncryptAndSave(gameFile, json_gamestate);
+			string text = LocalJsonUtils.NormalizeLikelyJson(json_gamestate);
+			Debug.Log("Game.SaveLocally: " + text);
+			TFUtils.WriteFile(gameFile, text);
 		}
 	}
 
@@ -366,8 +307,34 @@ public class Game
 	{
 		string text = gameFile;
 		Debug.Log("Gamefile location: " + text);
-		string contents = TFUtils.ReadFile(text);
-		return GameCrypto.Decrypt(contents);
+		string text2 = TFUtils.ReadFile(text);
+		string contents = LocalJsonUtils.NormalizeLikelyJson(text2);
+		if (!string.Equals(text2, contents, StringComparison.Ordinal))
+		{
+			TFUtils.WriteFile(text, contents);
+		}
+		if (LooksLikeValidJson(contents))
+		{
+			return contents;
+		}
+		Debug.LogWarning("[PROFILE_STORAGE] Local save is not valid JSON.");
+		return contents;
+	}
+
+	private static bool LooksLikeValidJson(string json)
+	{
+		if (string.IsNullOrEmpty(json))
+		{
+			return false;
+		}
+		try
+		{
+			return Json.Deserialize(json) != null;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
 	}
 
 	public bool GameExists(Player p)

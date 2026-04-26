@@ -16,13 +16,15 @@ public class Player
 
 	private const string USER_FILE = "user.json";
 
+	private const string LOCAL_PROFILE_ROOT_FOLDER = "profile";
+
 	public string playerId;
 
 	public bool isNew;
 
 	public uint InstalledDate;
 
-	private static readonly string CACHE_ROOT = Application.persistentDataPath + Path.DirectorySeparatorChar;
+	private static readonly string CACHE_ROOT = ResolveCacheRoot() + Path.DirectorySeparatorChar;
 
 	private static readonly string LAST_PLAYED_FILE = CACHE_ROOT + "lastplayer";
 
@@ -65,6 +67,7 @@ public class Player
 
 	public static Player LoadFromFilesystem()
 	{
+		Debug.Log("[LOCAL_PROFILE_PATH] Cache root: " + CACHE_ROOT);
 		Debug.Log("H: LoadFromFilesystem() Lastplayer exists? : " + File.Exists(LAST_PLAYED_FILE));
 		if (File.Exists(LAST_PLAYED_FILE))
 		{
@@ -135,7 +138,7 @@ public class Player
 			Directory.CreateDirectory(cacheDir);
 		}
 		string filename = CacheFile("user.json");
-		string data = Json.Serialize(ToDict());
+		string data = LocalJsonUtils.NormalizeLikelyJson(Json.Serialize(ToDict()));
 		TFUtils.WriteFile(filename, data);
 		TFUtils.WriteFile(LAST_PLAYED_FILE, PlayerFolder());
 	}
@@ -169,5 +172,32 @@ public class Player
 	private string PlayerFolder()
 	{
 		return "p_" + playerId;
+	}
+
+	private static string ResolveCacheRoot()
+	{
+		string persistentDataPath = Application.persistentDataPath;
+		if (Application.isMobilePlatform)
+		{
+			return persistentDataPath;
+		}
+		try
+		{
+			string dataPath = Application.dataPath;
+			DirectoryInfo parent = Directory.GetParent(dataPath);
+			if (parent != null)
+			{
+				string text = Path.Combine(parent.FullName, LOCAL_PROFILE_ROOT_FOLDER);
+				Directory.CreateDirectory(text);
+				Debug.Log("[LOCAL_PROFILE_PATH] Using executable-adjacent path: " + text);
+				return text;
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.LogWarning("[LOCAL_PROFILE_PATH] Failed to resolve executable-adjacent path, fallback to persistentDataPath. Reason: " + ex.Message);
+		}
+		Debug.LogWarning("[LOCAL_PROFILE_PATH] Fallback path: " + persistentDataPath);
+		return persistentDataPath;
 	}
 }
