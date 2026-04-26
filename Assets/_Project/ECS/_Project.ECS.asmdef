@@ -1,0 +1,17 @@
+{
+  "name": "_Project.ECS",
+  "rootNamespace": "Project.ECS",
+  "references": [
+    "_Project.Core.Domain",
+    "_Project.Core.Application"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

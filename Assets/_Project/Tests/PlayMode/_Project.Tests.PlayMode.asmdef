@@ -1,0 +1,22 @@
+{
+  "name": "_Project.Tests.PlayMode",
+  "rootNamespace": "Project.Tests.PlayMode",
+  "references": [
+    "_Project.Core.Domain",
+    "_Project.Core.Application",
+    "_Project.Presentation",
+    "_Project.Feature.Battle"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

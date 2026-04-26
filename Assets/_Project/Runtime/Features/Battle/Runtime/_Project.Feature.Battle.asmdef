@@ -1,0 +1,17 @@
+{
+  "name": "_Project.Feature.Battle",
+  "rootNamespace": "Project.Feature.Battle",
+  "references": [
+    "_Project.Core.Application",
+    "_Project.Core.Domain"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

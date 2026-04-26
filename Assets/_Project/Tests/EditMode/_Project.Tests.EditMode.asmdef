@@ -1,0 +1,24 @@
+{
+  "name": "_Project.Tests.EditMode",
+  "rootNamespace": "Project.Tests.EditMode",
+  "references": [
+    "_Project.Core.Domain",
+    "_Project.Core.Application",
+    "_Project.Core.Infrastructure",
+    "_Project.Feature.Battle"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}
