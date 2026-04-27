@@ -15,8 +15,6 @@ public class SQSettings
 
 	private static int saveInterval;
 
-	private static int patchingFileLimit;
-
 	private static string bundleIdentifier;
 
 	private static string bundleVersion;
@@ -29,14 +27,6 @@ public class SQSettings
 		get
 		{
 			return serverUrl + "persist/static/";
-		}
-	}
-
-	public static string MANIFEST_URL
-	{
-		get
-		{
-			return serverUrl + "persist/static/manifest.json";
 		}
 	}
 
@@ -85,14 +75,6 @@ public class SQSettings
 		}
 	}
 
-	public static int PATCHING_FILE_LIMIT
-	{
-		get
-		{
-			return patchingFileLimit;
-		}
-	}
-
 	public static string BundleIdentifier
 	{
 		get
@@ -138,14 +120,5 @@ public class SQSettings
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : getJsonPath(streamingAssetsFile));
 		dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
 		saveInterval = TFUtils.LoadInt(dictionary, "save_interval");
-		int? num = TFUtils.TryLoadInt(dictionary, "patching_file_limit");
-		if (num.HasValue)
-		{
-			patchingFileLimit = num.Value;
-		}
-		else
-		{
-			patchingFileLimit = 10;
-		}
 	}
 }

@@ -40,7 +40,7 @@ namespace Allies
 
 		public static void AllyRequest(Session session, string user_id, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -90,7 +90,7 @@ namespace Allies
 		public static void GetHelperList(Session session, List<string> excludeIDs, HelperListCallback callback)
 		{
 			bool flag = Singleton<TutorialController>.Instance.IsBlockActive("Social");
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data["success"].ToString() == "True")
 				{
@@ -107,7 +107,7 @@ namespace Allies
 
 		public static void GetHelper(Session session, string targetHelper, HelperListCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data["success"].ToString() == "True")
 				{
@@ -144,7 +144,7 @@ namespace Allies
 
 		public static void ConfirmAllyRequest(Session session, string user_id, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -229,7 +229,7 @@ namespace Allies
 
 		public static void UpdateMyAllyInfo(Session session, bool resetHelpCount, bool resetAnonymousHelpCount, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -253,7 +253,7 @@ namespace Allies
 
 		public static void UseTheAlly(Session session, string user_id, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -277,7 +277,7 @@ namespace Allies
 
 		public static void UseThePlayer(Session session, string user_id, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -301,7 +301,7 @@ namespace Allies
 
 		public static void RetrieveAllyInformation(Session session, string user_id, AllyDataCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -325,7 +325,7 @@ namespace Allies
 
 		public static void GetAllyStatus(Session session, AllyDataCallback callback)
 		{
-			TFServer.JsonResponseHandler jsonResponseHandler = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler jsonResponseHandler = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -348,7 +348,7 @@ namespace Allies
 
 		public static void CreateAllyUser(Session session, string name, string icon, string deck, float deckRank, string landscapes, string leader, int leaderLevel, int maxLevel, AllyDataCallback callback)
 		{
-			TFServer.JsonResponseHandler jsonResponseHandler = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler jsonResponseHandler = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -577,7 +577,7 @@ namespace Allies
 		public static void FakeFriendRequestReceive()
 		{
 			Session theSession = SessionManager.Instance.theSession;
-			TFServer.JsonResponseHandler handler = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler handler = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status != HttpStatusCode.OK)
 				{
@@ -587,3 +587,4 @@ namespace Allies
 		}
 	}
 }
+

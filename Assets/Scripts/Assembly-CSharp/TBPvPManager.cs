@@ -137,7 +137,7 @@ public class TBPvPManager : Singleton<TBPvPManager>
 	public void CheckIP()
 	{
 		Session theSession = SessionManager.Instance.theSession;
-		TFServer.JsonResponseHandler handler = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler handler = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			myIP = string.Empty;
 			myCountryCode = "US";
@@ -338,3 +338,4 @@ public class TBPvPManager : Singleton<TBPvPManager>
 		GameClientInstance.loadBalancingPeer.OpRaiseEvent(1, hashtable, true, null);
 	}
 }
+

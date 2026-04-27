@@ -172,7 +172,7 @@ public class Game
 		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
-	public void SaveToServer(Session session, string gameData, TFWebFileServer.FileCallbackHandler callback = null)
+	public void SaveToServer(Session session, string gameData, Action<TFWebFileResponse> callback = null)
 	{
 		if (gameData == null)
 		{
@@ -181,7 +181,7 @@ public class Game
 		}
 		_finishedAccess = false;
 		Debug.Log("Saving gamedata to server");
-		TFWebFileServer.FileCallbackHandler callback2 = saveCBHandler;
+		Action<TFWebFileResponse> callback2 = saveCBHandler;
 		if (callback != null)
 		{
 			callback2 = delegate(TFWebFileResponse response)

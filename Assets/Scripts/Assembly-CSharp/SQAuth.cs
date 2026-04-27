@@ -21,7 +21,7 @@ public class SQAuth
 
 	public static LoadPlayerNameCallback LoadPlayerNameFunction;
 
-	public void AuthUser(Session session, TFServer.JsonResponseHandler callback, bool doFacebookAuth, string fbAccessToken)
+	public void AuthUser(Session session, SQServer.JsonResponseHandler callback, bool doFacebookAuth, string fbAccessToken)
 	{
 		Player player = Player.LoadFromFilesystem();
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
@@ -33,3 +33,4 @@ public class SQAuth
 		callback(dictionary, HttpStatusCode.OK);
 	}
 }
+

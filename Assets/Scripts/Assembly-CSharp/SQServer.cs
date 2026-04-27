@@ -7,6 +7,10 @@ using MiniJSON;
 
 public class SQServer
 {
+	public delegate void JsonStringHandler(string jsonResponse, HttpStatusCode status);
+
+	public delegate void JsonResponseHandler(Dictionary<string, object> dict, HttpStatusCode status);
+
 	public SQServer(CookieContainer cookies)
 	{
 	}
@@ -16,153 +20,153 @@ public class SQServer
 		return response == null || (response.ContainsKey("error") && response["error"] != null);
 	}
 
-	public void SavePurchase(string store_id, string store, string sandbox, string partial, string bundle_id, string productId, string playerId, string receipt, TFServer.JsonResponseHandler callback)
+	public void SavePurchase(string store_id, string store, string sandbox, string partial, string bundle_id, string productId, string playerId, string receipt, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail("offline"), HttpStatusCode.NotFound);
 	}
 
 
-	public void MultiplayerPlayerInfo(string playerId, TFServer.JsonResponseHandler callback)
+	public void MultiplayerPlayerInfo(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerNewPlayer(string name, string icon, string deck, float deckRank, string landscapes, string helpercreature, string leader, int leaderLevel, int maxLevel, int allyboxspace, TFServer.JsonResponseHandler callback)
+	public void MultiplayerNewPlayer(string name, string icon, string deck, float deckRank, string landscapes, string helpercreature, string leader, int leaderLevel, int maxLevel, int allyboxspace, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerUpdateDeck(string name, string deck, int needUpdate, string landscapes, string helpercreature, string leader, int leaderLevel, int allyboxspace, TFServer.JsonResponseHandler callback)
+	public void MultiplayerUpdateDeck(string name, string deck, int needUpdate, string landscapes, string helpercreature, string leader, int leaderLevel, int allyboxspace, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerUpdatePlayer(string name, string icon, int maxLevel, TFServer.JsonResponseHandler callback)
+	public void MultiplayerUpdatePlayer(string name, string icon, int maxLevel, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void RedeemcodeCheck(string redeemcode, string version, string subject, string message, DateTime start_date, DateTime end_date, int soft_currency, TFServer.JsonResponseHandler callback)
+	public void RedeemcodeCheck(string redeemcode, string version, string subject, string message, DateTime start_date, DateTime end_date, int soft_currency, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail("invalid redeemcode"), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerExtendedRecord(string playerId, TFServer.JsonResponseHandler callback)
+	public void MultiplayerExtendedRecord(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, new List<object>()), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerLeaderboardPlayer(string playerId, TFServer.JsonResponseHandler callback)
+	public void MultiplayerLeaderboardPlayer(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, new List<object>()), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerLeaderboardTop(TFServer.JsonResponseHandler callback)
+	public void MultiplayerLeaderboardTop(SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, new List<object>()), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerGetRank(bool global, TFServer.JsonResponseHandler callback)
+	public void MultiplayerGetRank(bool global, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerPersonalRecord(string target, TFServer.JsonResponseHandler callback)
+	public void MultiplayerPersonalRecord(string target, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, new List<object>()), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerNotification(TFServer.JsonResponseHandler callback)
+	public void MultiplayerNotification(SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerTournamentPlayerResult(TFServer.JsonResponseHandler callback)
+	public void MultiplayerTournamentPlayerResult(SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, new List<object>()), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerFindMatch(int maxLevel, TFServer.JsonResponseHandler callback)
+	public void MultiplayerFindMatch(int maxLevel, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerStartMatch(string matchId, float deckRank, string leader, int leaderLevel, TFServer.JsonStringHandler callback)
+	public void MultiplayerStartMatch(string matchId, float deckRank, string leader, int leaderLevel, SQServer.JsonStringHandler callback)
 	{
 		callback(string.Empty, HttpStatusCode.NotFound);
 	}
 
-	public void MultiplayerEndMatch(string matchId, bool loss, TFServer.JsonResponseHandler callback)
+	public void MultiplayerEndMatch(string matchId, bool loss, SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerCheaterTournamentEnd(TFServer.JsonResponseHandler callback)
+	public void MultiplayerCheaterTournamentEnd(SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerGetTournamentEnd(TFServer.JsonResponseHandler callback)
+	public void MultiplayerGetTournamentEnd(SQServer.JsonResponseHandler callback)
 	{
 		callback(Fail(), HttpStatusCode.OK);
 	}
 
-	public void MultiplayerRedeemReward(int tournamentId, TFServer.JsonResponseHandler callback)
+	public void MultiplayerRedeemReward(int tournamentId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_update_myinfo(bool helpcount, bool anonymoushelpcount, TFServer.JsonResponseHandler callback)
+	public void Friend_update_myinfo(bool helpcount, bool anonymoushelpcount, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_use_friend(string friend_id, TFServer.JsonResponseHandler callback)
+	public void Friend_use_friend(string friend_id, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_use_player(string user_id, TFServer.JsonResponseHandler callback)
+	public void Friend_use_player(string user_id, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_request_with_myinfo(string playerId, TFServer.JsonResponseHandler callback)
+	public void Friend_request_with_myinfo(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_fake_request_with_myinfo(TFServer.JsonResponseHandler handler)
+	public void Friend_fake_request_with_myinfo(SQServer.JsonResponseHandler handler)
 	{
 		handler(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_confirm_with_myinfo(string playerId, TFServer.JsonResponseHandler callback)
+	public void Friend_confirm_with_myinfo(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void Friend_get_userinfo(string playerId, TFServer.JsonResponseHandler callback)
+	public void Friend_get_userinfo(string playerId, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, BuildOfflineAllyUserInfo(playerId)), HttpStatusCode.OK);
 	}
 
-	public void Friend_get_helpers(string optionTarget, List<string> excludeIDs, TFServer.JsonResponseHandler callback)
+	public void Friend_get_helpers(string optionTarget, List<string> excludeIDs, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, "[]"), HttpStatusCode.OK);
 	}
 
-	public void User_currency_history2(int num, TFServer.JsonResponseHandler callback)
+	public void User_currency_history2(int num, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void User_currency_history(string country, int transaction, int tier, int paid, int free, TFServer.JsonResponseHandler callback)
+	public void User_currency_history(string country, int transaction, int tier, int paid, int free, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void User_action(int pd, int fr, int cu, int dp, int df, int dc, string us, int hd, int misc, string evt, string cc, TFServer.JsonResponseHandler callback)
+	public void User_action(int pd, int fr, int cu, int dp, int df, int dc, string us, int hd, int misc, string evt, string cc, SQServer.JsonResponseHandler callback)
 	{
 		int num = Math.Max(0, pd + dp);
 		int num2 = Math.Max(0, fr + df);
@@ -181,7 +185,7 @@ public class SQServer
 		callback(Json(true, data), HttpStatusCode.OK);
 	}
 
-	public void GetCC(TFServer.JsonResponseHandler handler)
+	public void GetCC(SQServer.JsonResponseHandler handler)
 	{
 		Dictionary<string, object> dictionary = new Dictionary<string, object>();
 		dictionary["ip"] = string.Empty;
@@ -189,27 +193,27 @@ public class SQServer
 		handler(dictionary, HttpStatusCode.OK);
 	}
 
-	public void PlaceMeOnLeaderboard(string user_id, string currentSeasonID, TFServer.JsonResponseHandler callback)
+	public void PlaceMeOnLeaderboard(string user_id, string currentSeasonID, SQServer.JsonResponseHandler callback)
 	{
 		callback(Ok(), HttpStatusCode.OK);
 	}
 
-	public void RegisterMatchResult(string user_id, string currentSeasonID, string opnentID, bool didIWin, TFServer.JsonResponseHandler callback)
+	public void RegisterMatchResult(string user_id, string currentSeasonID, string opnentID, bool didIWin, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, 0), HttpStatusCode.OK);
 	}
 
-	public void FetchLeaderboardsEntries(int startPosition, int endPosition, TFServer.JsonResponseHandler callback)
+	public void FetchLeaderboardsEntries(int startPosition, int endPosition, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, "[]"), HttpStatusCode.OK);
 	}
 
-	public void HasSeasonEnded(string user_id, TFServer.JsonResponseHandler callback)
+	public void HasSeasonEnded(string user_id, SQServer.JsonResponseHandler callback)
 	{
 		callback(Json(true, 0), HttpStatusCode.OK);
 	}
 
-	public void CompassSupportLogin(string project_id, string support_id, string p, string user_id, string checkkey, TFServer.JsonStringHandler callback)
+	public void CompassSupportLogin(string project_id, string support_id, string p, string user_id, string checkkey, SQServer.JsonStringHandler callback)
 	{
 		callback("{\"result\":\"0\"}", HttpStatusCode.OK);
 	}
@@ -288,3 +292,4 @@ public class SQServer
 		return MiniJSON.Json.Serialize(list);
 	}
 }
+

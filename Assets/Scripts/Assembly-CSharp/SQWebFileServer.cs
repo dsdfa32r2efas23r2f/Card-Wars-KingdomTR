@@ -1,12 +1,11 @@
 using System.IO;
 using System.Net;
 
-public class SQWebFileServer : TFWebFileServer
+public class SQWebFileServer
 {
 	private string eTagFile;
 
 	public SQWebFileServer(CookieContainer cookies)
-		: base(cookies)
 	{
 	}
 

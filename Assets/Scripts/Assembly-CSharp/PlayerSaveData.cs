@@ -1264,7 +1264,7 @@ public class PlayerSaveData
 		{
 			return;
 		}
-		TFServer.JsonResponseHandler callback = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && !((string)data["success"] == "True"))
 			{
@@ -1284,7 +1284,7 @@ public class PlayerSaveData
 		{
 			return;
 		}
-		TFServer.JsonResponseHandler callback = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && !(bool)data["success"])
 			{
@@ -1348,7 +1348,7 @@ public class PlayerSaveData
 			empty = eventName;
 			LogUserTransactionServerHistory(theSession, Singleton<TBPvPManager>.Instance.CountryCode, free, 9);
 		}
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
@@ -1388,7 +1388,7 @@ public class PlayerSaveData
 	public void ConsumeHardCurrency2(int amount, string eventName, ActionCallback callback)
 	{
 		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
@@ -1449,7 +1449,7 @@ public class PlayerSaveData
 	public void ConsumeHardCurrencyCustom(int amount, string eventName, ActionCallback callback)
 	{
 		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
@@ -1501,7 +1501,7 @@ public class PlayerSaveData
 	{
 		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		Session theSession = SessionManager.Instance.theSession;
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
@@ -1551,7 +1551,7 @@ public class PlayerSaveData
 	{
 		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		Session theSession = SessionManager.Instance.theSession;
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
@@ -1646,3 +1646,4 @@ public class PlayerSaveData
 		return null;
 	}
 }
+

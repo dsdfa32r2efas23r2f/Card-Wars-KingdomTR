@@ -152,7 +152,7 @@ public class GooglePurchaseListener : IPurchaseListener
 		int ret_handle = -1;
 		m_receiptCallback = callback;
 		uniqhandle++;
-		TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			if (status == HttpStatusCode.OK && data["success"].ToString() == "True")
 			{
@@ -384,3 +384,4 @@ public class GooglePurchaseListener : IPurchaseListener
 	{
 	}
 }
+

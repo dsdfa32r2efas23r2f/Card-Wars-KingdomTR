@@ -11,7 +11,7 @@ namespace Multiplayer
 
 		public static void GetMultiplayerStatus(Session session, MultiplayerDataCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -40,7 +40,7 @@ namespace Multiplayer
 
 		public static void CreateMultiplayerUser(Session session, string name, string icon, string deck, float deckRank, string landscapes, string leader, int leaderLevel, int maxLevel, MultiplayerDataCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -85,7 +85,7 @@ namespace Multiplayer
 
 		public static void PlayerRecord(Session session, string playerId, ExtendedRecordCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
@@ -102,7 +102,7 @@ namespace Multiplayer
 
 		public static void RecentBattles(Session session, NotificationCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
@@ -118,7 +118,7 @@ namespace Multiplayer
 
 		public static void AttackRecord(Session session, RecordCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
@@ -135,7 +135,7 @@ namespace Multiplayer
 
 		public static void DefenseRecord(Session session, RecordCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
@@ -152,7 +152,7 @@ namespace Multiplayer
 
 		public static void TournamentReward(Session session, RewardsCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
@@ -172,7 +172,7 @@ namespace Multiplayer
 
 		public static void TopLeaderboard(Session session, LeaderboardCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
@@ -188,7 +188,7 @@ namespace Multiplayer
 
 		public static void NearbyLeaderboard(Session session, LeaderboardCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
@@ -204,7 +204,7 @@ namespace Multiplayer
 
 		public static void MatchMake(Session session, int maxLevel, MatchDataCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
@@ -220,7 +220,7 @@ namespace Multiplayer
 
 		public static void MatchGetDeck(Session session, string matchid, float deckRank, string leader, int leaderLevel, StringCallback callback)
 		{
-			TFServer.JsonStringHandler callback2 = delegate(string data, HttpStatusCode status)
+			SQServer.JsonStringHandler callback2 = delegate(string data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null)
 				{
@@ -240,7 +240,7 @@ namespace Multiplayer
 
 		public static void MatchFinish(Session session, string matchId, bool loss, StringCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dictionary) && dictionary.ContainsKey("trophies"))
 				{
@@ -260,7 +260,7 @@ namespace Multiplayer
 
 		public static void UpdateMultiplayerUser(Session session, string name, string icon, int maxLevel, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 				{
@@ -280,7 +280,7 @@ namespace Multiplayer
 
 		public static void UpdateDeck(Session session, string name, string deck, int needUpdate, string landscapes, string helpercreature, string leader, int leaderLevel, int allyboxspace, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 				{
@@ -297,7 +297,7 @@ namespace Multiplayer
 
 		public static void CheckRedeemCode(Session session, string redeemcode, string version, string subject, string message, DateTime start_date, DateTime end_date, int soft_currency, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 				{
@@ -321,7 +321,7 @@ namespace Multiplayer
 
 		public static void GetTournamentEndDate(Session session, bool cheater, TournamentDataCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
@@ -344,7 +344,7 @@ namespace Multiplayer
 
 		public static void CompleteTournamentReward(Session session, int tournamentId, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 				{
@@ -360,7 +360,7 @@ namespace Multiplayer
 
 		public static void GetRank(Session session, bool global, StringCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dictionary) && dictionary.ContainsKey("rank"))
 				{
@@ -550,3 +550,4 @@ namespace Multiplayer
 		}
 	}
 }
+

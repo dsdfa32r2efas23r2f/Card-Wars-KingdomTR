@@ -7,7 +7,7 @@ namespace DW_Leaderboards
 	{
 		public static void PlaceMeOnLeaderboard(Session session, string user_id, string currentSeasonID, SuccessCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -28,7 +28,7 @@ namespace DW_Leaderboards
 		public static void RegisterMatchResult(Session session, string user_id, string currentSeasonID, string opponentID, bool didIWin, RegisterMatchResultCallback callback)
 		{
 			bool flag = Singleton<TutorialController>.Instance.IsBlockActive("Social");
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -48,7 +48,7 @@ namespace DW_Leaderboards
 
 		public static void FetchLeaderboardsEntries(Session session, int startPosition, int endPosition, LeaderboardListCallback callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -72,7 +72,7 @@ namespace DW_Leaderboards
 
 		public static void HasSeasonEnded(Session session, string user_id, HasSeasonEnded callback)
 		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
+			SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
 				if (data == null)
 				{
@@ -96,3 +96,4 @@ namespace DW_Leaderboards
 		}
 	}
 }
+

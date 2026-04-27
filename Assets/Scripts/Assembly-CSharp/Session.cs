@@ -165,8 +165,6 @@ public class Session
 
 	private Dictionary<string, TFWebFileResponse> asyncFileRequests = new Dictionary<string, TFWebFileResponse>();
 
-	private SQContentPatcher contentPatcher;
-
 	private bool _finishedPatching;
 
 	private Thread _validationThread;
@@ -506,7 +504,7 @@ public class Session
 		Debug.Log("[OFFLINE_BACKEND] Ignoring external message: " + msg);
 	}
 
-	public void registerExternalCallback(string requestId, TFServer.JsonResponseHandler callback)
+	public void registerExternalCallback(string requestId, SQServer.JsonResponseHandler callback)
 	{
 		Debug.Log("[OFFLINE_BACKEND] registerExternalCallback ignored for requestId=" + requestId);
 	}
@@ -593,7 +591,7 @@ public class Session
 		}
 	}
 
-	public TFServer.JsonResponseHandler AsyncResponder(string key)
+	public SQServer.JsonResponseHandler AsyncResponder(string key)
 	{
 		return delegate(Dictionary<string, object> response, HttpStatusCode status)
 		{
@@ -626,7 +624,7 @@ public class Session
 		}
 	}
 
-	public TFWebFileServer.FileCallbackHandler AsyncFileResponder(string key)
+	public Action<TFWebFileResponse> AsyncFileResponder(string key)
 	{
 		return delegate(TFWebFileResponse response)
 		{
@@ -638,14 +636,6 @@ public class Session
 	{
 		_validationThread = null;
 		_finishedPatching = false;
-	}
-
-	public void PatchingEventListener(string patchingEvent)
-	{
-		if (patchingEvent == "patchingDone" || patchingEvent == "patchingNotNecessary")
-		{
-			_finishedPatching = true;
-		}
 	}
 
 	private void OnDispose()
@@ -671,41 +661,9 @@ public class Session
 		_validationThread = null;
 	}
 
-	public bool UpdatePatching()
-	{
-		if (contentPatcher != null || ValidatingLastPatch)
-		{
-			return contentPatcher != null;
-		}
-		Debug.Log("UpdatePatching - contentPatcher is null");
-		contentPatcher = new SQContentPatcher();
-		SQContentPatcher sQContentPatcher = contentPatcher;
-		sQContentPatcher.AddListener(OnPatchingEvent);
-		sQContentPatcher.ReadManifests();
-		return true;
-	}
-
-	private void OnPatchingEvent(string eventStr)
-	{
-		switch (eventStr)
-		{
-		case "patchingNecessary":
-			_finishedPatching = true;
-			contentPatcher.StartDownloadingPatchedContent();
-			break;
-		case "patchingDone":
-			_finishedPatching = true;
-			contentPatcher = null;
-			break;
-		case "patchingNotNecessary":
-			contentPatcher = null;
-			break;
-		}
-	}
-
 	public void StartPatch()
 	{
 		_finishedPatching = true;
-		contentPatcher = null;
 	}
 }
+
