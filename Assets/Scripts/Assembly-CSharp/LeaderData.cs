@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class LeaderData : ILoadableData
@@ -64,9 +63,9 @@ public class LeaderData : ILoadableData
 
 	private bool _Playable;
 
-	private ObscuredInt _BuyCost;
+	private int _BuyCost;
 
-	private ObscuredInt _APThreshold;
+	private int _APThreshold;
 
 	private LeaderVFXData _LeaderVFX;
 

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using Multiplayer;
 using UnityEngine;
 
@@ -94,7 +93,7 @@ public class PvPModeSelectController : Singleton<PvPModeSelectController>
 			RankNumberLabel.text = saveData.MultiplayerLevel.ToString();
 			Badge.PopulateMyData();
 			PvpRankData rank = PvpRankDataManager.Instance.GetRank(saveData.MultiplayerLevel);
-			ObscuredInt pointsInMultiplayerLevel = saveData.PointsInMultiplayerLevel;
+			int pointsInMultiplayerLevel = saveData.PointsInMultiplayerLevel;
 			int pointsToAdvance = rank.PointsToAdvance;
 			SeasonProgressBar.AnimateTo(pointsInMultiplayerLevel, pointsInMultiplayerLevel, pointsToAdvance);
 			SeasonProgressBar.gameObject.SetActive(rank.Rank > 1);

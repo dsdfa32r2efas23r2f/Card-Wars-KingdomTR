@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using MiniJSON;
 using UnityEngine;
 
@@ -543,7 +542,7 @@ public class MultiplayerMessageHandler : Singleton<MultiplayerMessageHandler>
 		{
 			return SerializeList(jsonObject as List<object>);
 		}
-		if (jsonObject is string || jsonObject is ObscuredString)
+		if (jsonObject is string)
 		{
 			string text = jsonObject.ToString();
 			if (text.StartsWith("{"))

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using CodeStage.AntiCheat.ObscuredTypes;
 using MiniJSON;
 using UnityEngine;
 
@@ -74,7 +73,7 @@ public class PlayerSaveData
 
 	public int PlayersLastSavedLevel;
 
-	public ObscuredString MultiplayerPlayerName = string.Empty;
+	public string MultiplayerPlayerName = string.Empty;
 
 	public int SelectedLoadout;
 
@@ -90,13 +89,13 @@ public class PlayerSaveData
 
 	public uint PvpStaminaFullAtTime;
 
-	public ObscuredUInt ExtraQuestStamina;
+	public uint ExtraQuestStamina;
 
-	public ObscuredUInt ExtraPvpStamina;
+	public uint ExtraPvpStamina;
 
-	public ObscuredInt InventorySpace;
+	public int InventorySpace;
 
-	public ObscuredInt AllyBoxSpace;
+	public int AllyBoxSpace;
 
 	public bool NotificationEnabled = true;
 
@@ -142,19 +141,19 @@ public class PlayerSaveData
 
 	public bool UIDFixApplied = true;
 
-	public ObscuredInt ExpeditionSlots;
+	public int ExpeditionSlots;
 
-	private ObscuredInt _MultiplayerLevel;
+	private int _MultiplayerLevel;
 
-	public ObscuredInt BestMultiplayerLevel;
+	public int BestMultiplayerLevel;
 
-	public ObscuredInt PointsInMultiplayerLevel;
+	public int PointsInMultiplayerLevel;
 
-	public ObscuredInt MultiplayerWinStreak;
+	public int MultiplayerWinStreak;
 
 	public PvpSeasonData ActivePvpSeason;
 
-	public ObscuredInt PvpRankRewardsGranted = -1;
+	public int PvpRankRewardsGranted = -1;
 
 	public bool PlayedFirstBattleInPvpSeason;
 
@@ -174,7 +173,7 @@ public class PlayerSaveData
 
 	public CardBackData SelectedCardBack;
 
-	public Dictionary<string, ObscuredInt> DungeonMaps = new Dictionary<string, ObscuredInt>();
+	public Dictionary<string, int> DungeonMaps = new Dictionary<string, int>();
 
 	public bool TownTiltCam;
 
@@ -186,7 +185,7 @@ public class PlayerSaveData
 
 	public int InstalledDate;
 
-	public ObscuredInt RandomDungeonLevel;
+	public int RandomDungeonLevel;
 
 	public uint DateOfBirth;
 
@@ -202,13 +201,13 @@ public class PlayerSaveData
 
 	public Dictionary<GachaSlotData, int> GachaKeys = new Dictionary<GachaSlotData, int>();
 
-	private ObscuredInt _SoftCurrency;
+	private int _SoftCurrency;
 
-	public ObscuredInt CustomizationCurrency;
+	public int CustomizationCurrency;
 
-	private ObscuredInt __PaidHardCurrency;
+	private int __PaidHardCurrency;
 
-	private ObscuredInt __FreeHardCurrency;
+	private int __FreeHardCurrency;
 
 	private int _Yuryo;
 
@@ -220,13 +219,13 @@ public class PlayerSaveData
 
 	private int _ReadWriteParam = 1981;
 
-	private ObscuredInt _PvPCurrency;
+	private int _PvPCurrency;
 
 	public CalendarTable ActiveCalendar;
 
 	public DateTime LastOneTimeCalendarDateClaimed;
 
-	public ObscuredInt OneTimeCalendarDaysClaimed = 0;
+	public int OneTimeCalendarDaysClaimed = 0;
 
 	public DateTime DailyMissionTimestamp;
 
@@ -236,7 +235,7 @@ public class PlayerSaveData
 
 	public List<string> DeletedMail = new List<string>();
 
-	private ObscuredInt _AllyBoxSpace;
+	private int _AllyBoxSpace;
 
 	private List<InventorySlotItem> _InventorySlots = new List<InventorySlotItem>();
 
@@ -248,7 +247,7 @@ public class PlayerSaveData
 
 	private int mXPMaterialCount;
 
-	private ObscuredInt _RankXP;
+	private int _RankXP;
 
 	private int mMailCount;
 
@@ -287,7 +286,7 @@ public class PlayerSaveData
 		}
 	}
 
-	private ObscuredInt _PaidHardCurrency
+	private int _PaidHardCurrency
 	{
 		get
 		{
@@ -300,7 +299,7 @@ public class PlayerSaveData
 		}
 	}
 
-	private ObscuredInt _FreeHardCurrency
+	private int _FreeHardCurrency
 	{
 		get
 		{
@@ -1162,7 +1161,7 @@ public class PlayerSaveData
 
 	public void AddDungeonMap(string questID, int quantity)
 	{
-		ObscuredInt value;
+		int value;
 		if (DungeonMaps.TryGetValue(questID, out value))
 		{
 			DungeonMaps[questID] = (int)value + quantity;
@@ -1175,7 +1174,7 @@ public class PlayerSaveData
 
 	public void ConsumeDungeonMap(string questID)
 	{
-		ObscuredInt value;
+		int value;
 		if (DungeonMaps.TryGetValue(questID, out value))
 		{
 			if ((int)value == 1)

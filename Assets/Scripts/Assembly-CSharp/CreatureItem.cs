@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class CreatureItem
@@ -14,9 +13,9 @@ public class CreatureItem
 
 	public PassiveSkillAbilitySource PassiveSkillAbility;
 
-	private ObscuredInt _PassiveSkillLevel = 1;
+	private int _PassiveSkillLevel = 1;
 
-	private ObscuredInt _ExCardSlotsUnlocked = 1;
+	private int _ExCardSlotsUnlocked = 1;
 
 	public InventorySlotItem[] ExCards = new InventorySlotItem[3];
 
@@ -44,7 +43,7 @@ public class CreatureItem
 		}
 	}
 
-	public ObscuredInt PassiveFeeds { get; set; }
+	public int PassiveFeeds { get; set; }
 
 	public int PassiveSkillLevel
 	{
@@ -80,7 +79,7 @@ public class CreatureItem
 		}
 	}
 
-	public ObscuredInt Xp { get; set; }
+	public int Xp { get; set; }
 
 	public int MaxLevel
 	{

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class CreatureData : ILoadableData
@@ -113,7 +112,7 @@ public class CreatureData : ILoadableData
 
 	private float _Height;
 
-	private ObscuredInt _TeamCost;
+	private int _TeamCost;
 
 	private float _GrowthFactor;
 
@@ -157,33 +156,33 @@ public class CreatureData : ILoadableData
 		}
 	}
 
-	public ObscuredInt MinHP { get; private set; }
+	public int MinHP { get; private set; }
 
-	public ObscuredInt MaxHP { get; private set; }
+	public int MaxHP { get; private set; }
 
-	public ObscuredInt MinSTR { get; private set; }
+	public int MinSTR { get; private set; }
 
-	public ObscuredInt MaxSTR { get; private set; }
+	public int MaxSTR { get; private set; }
 
-	public ObscuredInt MinDEF { get; private set; }
+	public int MinDEF { get; private set; }
 
-	public ObscuredInt MaxDEF { get; private set; }
+	public int MaxDEF { get; private set; }
 
-	public ObscuredInt MinINT { get; private set; }
+	public int MinINT { get; private set; }
 
-	public ObscuredInt MaxINT { get; private set; }
+	public int MaxINT { get; private set; }
 
-	public ObscuredInt MinRES { get; private set; }
+	public int MinRES { get; private set; }
 
-	public ObscuredInt MaxRES { get; private set; }
+	public int MaxRES { get; private set; }
 
-	public ObscuredInt MinDEX { get; private set; }
+	public int MinDEX { get; private set; }
 
-	public ObscuredInt MaxDEX { get; private set; }
+	public int MaxDEX { get; private set; }
 
-	public ObscuredInt AttackCost { get; private set; }
+	public int AttackCost { get; private set; }
 
-	public ObscuredInt DeployCost { get; private set; }
+	public int DeployCost { get; private set; }
 
 	public string Prefab
 	{

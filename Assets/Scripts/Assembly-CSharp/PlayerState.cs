@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class PlayerState
@@ -20,9 +19,9 @@ public class PlayerState
 
 	public const int CARDS_TO_DEAL = 5;
 
-	private ObscuredInt actionPoints;
+	private int actionPoints;
 
-	private ObscuredInt CurrentActionPoints;
+	private int CurrentActionPoints;
 
 	public BoardStats Statistics;
 
@@ -58,9 +57,9 @@ public class PlayerState
 		}
 	}
 
-	public ObscuredInt EffectiveCurrentActionPoints { get; private set; }
+	public int EffectiveCurrentActionPoints { get; private set; }
 
-	public ObscuredInt CurrentPvpTimeLimit { get; set; }
+	public int CurrentPvpTimeLimit { get; set; }
 
 	public BoardState Game { get; set; }
 
@@ -76,7 +75,7 @@ public class PlayerState
 		}
 	}
 
-	public ObscuredInt APMeter { get; set; }
+	public int APMeter { get; set; }
 
 	public int DamageDealt { get; set; }
 

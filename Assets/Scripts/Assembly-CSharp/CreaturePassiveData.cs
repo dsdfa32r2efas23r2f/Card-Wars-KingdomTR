@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 
 public class CreaturePassiveData : ILoadableData
 {
@@ -7,9 +6,9 @@ public class CreaturePassiveData : ILoadableData
 
 	public string LevelGroup { get; private set; }
 
-	public ObscuredInt[] MinValues { get; private set; }
+	public int[] MinValues { get; private set; }
 
-	public ObscuredInt[] MaxValues { get; private set; }
+	public int[] MaxValues { get; private set; }
 
 	public string Description { get; private set; }
 
@@ -33,8 +32,8 @@ public class CreaturePassiveData : ILoadableData
 		DisplayName = TFUtils.LoadLocalizedString(dict, "DisplayName", string.Empty);
 		FeedsPerLevel = TFUtils.LoadInt(dict, "FeedsPerLevel", 3);
 		ValID = TFUtils.LoadString(dict, "ValID", null);
-		List<ObscuredInt> list = new List<ObscuredInt>();
-		List<ObscuredInt> list2 = new List<ObscuredInt>();
+		List<int> list = new List<int>();
+		List<int> list2 = new List<int>();
 		int num = 1;
 		while (true)
 		{
@@ -52,9 +51,9 @@ public class CreaturePassiveData : ILoadableData
 		MaxValues = list2.ToArray();
 	}
 
-	public ObscuredInt[] GetValuesAtLevel(int level)
+	public int[] GetValuesAtLevel(int level)
 	{
-		ObscuredInt[] array = new ObscuredInt[MinValues.Length];
+		int[] array = new int[MinValues.Length];
 		for (int i = 0; i < array.Length; i++)
 		{
 			float num = ((MaxLevel <= 0) ? 1f : (1E-05f + (float)level / (float)MaxLevel));
@@ -66,7 +65,7 @@ public class CreaturePassiveData : ILoadableData
 	public string BuildDescriptionString(int level)
 	{
 		string text = Description;
-		ObscuredInt[] valuesAtLevel = GetValuesAtLevel(level);
+		int[] valuesAtLevel = GetValuesAtLevel(level);
 		for (int i = 0; i < valuesAtLevel.Length; i++)
 		{
 			text = text.Replace("<val" + (i + 1) + ">", valuesAtLevel[i].ToString());

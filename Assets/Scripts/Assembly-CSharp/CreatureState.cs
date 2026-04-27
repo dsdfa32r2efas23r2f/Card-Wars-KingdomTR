@@ -1,23 +1,22 @@
 using System;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class CreatureState
 {
-	private ObscuredInt _MaxHP;
+	private int _MaxHP;
 
-	private ObscuredFloat _STR;
+	private float _STR;
 
-	private ObscuredFloat _DEF;
+	private float _DEF;
 
-	private ObscuredFloat _INT;
+	private float _INT;
 
-	private ObscuredFloat _RES;
+	private float _RES;
 
-	private ObscuredFloat _DEX;
+	private float _DEX;
 
-	private ObscuredInt _Damage;
+	private int _Damage;
 
 	private float[] mBaseStats = new float[6];
 
@@ -176,25 +175,25 @@ public class CreatureState
 		}
 	}
 
-	public ObscuredBool IgnoreDEF { get; set; }
+	public bool IgnoreDEF { get; set; }
 
-	public ObscuredBool BreakDEF { get; set; }
+	public bool BreakDEF { get; set; }
 
-	public ObscuredBool IgnoreRES { get; set; }
+	public bool IgnoreRES { get; set; }
 
-	public ObscuredBool BreakRES { get; set; }
+	public bool BreakRES { get; set; }
 
-	public ObscuredBool HasBravery { get; set; }
+	public bool HasBravery { get; set; }
 
-	public ObscuredBool HasImmunity { get; set; }
+	public bool HasImmunity { get; set; }
 
-	public ObscuredBool HasStealth { get; set; }
+	public bool HasStealth { get; set; }
 
-	public ObscuredBool IsFrozen { get; set; }
+	public bool IsFrozen { get; set; }
 
-	public ObscuredBool IsMindless { get; set; }
+	public bool IsMindless { get; set; }
 
-	public ObscuredBool IsParalyzed { get; set; }
+	public bool IsParalyzed { get; set; }
 
 	public bool HasArmor
 	{

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class DWGame : Singleton<DWGame>
@@ -40,9 +39,9 @@ public class DWGame : Singleton<DWGame>
 
 	private bool mStateSwitchInputLock;
 
-	private ObscuredFloat mMultiplayerTimeLeft = -1f;
+	private float mMultiplayerTimeLeft = -1f;
 
-	private ObscuredFloat mSaveMultiplayerTimeLeft = -1f;
+	private float mSaveMultiplayerTimeLeft = -1f;
 
 	public int turnNumber;
 

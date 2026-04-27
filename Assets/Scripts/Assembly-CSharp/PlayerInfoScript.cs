@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using CodeStage.AntiCheat.ObscuredTypes;
 using JsonFx.Json;
 using MiniJSON;
 using UnityEngine;
@@ -537,11 +536,11 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 	public static string MakeJS(string key, object val)
 	{
 		string text = "\"" + key + "\":";
-		if (val is string || val is ObscuredString)
+		if (val is string)
 		{
 			return string.Concat(text, "\"", val, "\"");
 		}
-		if (val is bool || val is ObscuredBool)
+		if (val is bool)
 		{
 			return text + ((!(bool)val) ? "0" : "1");
 		}
@@ -1266,7 +1265,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 	{
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.Append("{");
-		foreach (KeyValuePair<string, ObscuredInt> dungeonMap in SaveData.DungeonMaps)
+		foreach (KeyValuePair<string, int> dungeonMap in SaveData.DungeonMaps)
 		{
 			stringBuilder.Append(MakeJS(dungeonMap.Key, dungeonMap.Value) + ",");
 		}

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
 public class CardData : ILoadableData
@@ -178,7 +177,7 @@ public class CardData : ILoadableData
 
 	public CreatureFaction Faction { get; private set; }
 
-	public ObscuredInt Cost { get; private set; }
+	public int Cost { get; private set; }
 
 	public int SellPrice { get; private set; }
 

@@ -1,10 +1,9 @@
-using CodeStage.AntiCheat.ObscuredTypes;
 
 public class PassiveSkillAbilitySource : IAbilitySource
 {
 	private string _ScriptName;
 
-	private ObscuredInt[] _Values;
+	private int[] _Values;
 
 	public string ScriptName
 	{
