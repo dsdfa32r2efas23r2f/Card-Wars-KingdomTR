@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public abstract class DataManager<T> : IDataManager where T : ILoadableData
@@ -183,14 +183,14 @@ public abstract class DataManager<T> : IDataManager where T : ILoadableData
 
 				try
 				{
-					List<object> jlist = (List<object>)Json.Deserialize(wwwText);
+					List<object> jlist = LocalJsonUtils.DeserializeList(wwwText);
 					ParseRows(jlist);
 					doneLoadingAndParsingJsonData = true;
 				}
 				catch
 				{
 					List<object> list = new List<object>();
-					object item = Json.Deserialize(wwwText);
+					object item = LocalJsonUtils.DeserializeObject(wwwText);
 					list.Add(item);
 					ParseRows(list);
 					doneLoadingAndParsingJsonData = true;

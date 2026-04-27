@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using Allies;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -511,7 +511,7 @@ public class Session
 
 	private Version ProcessVersionData(string response)
 	{
-		object obj = Json.Deserialize(response);
+		object obj = LocalJsonUtils.DeserializeObject(response);
 		if (obj != null)
 		{
 			Dictionary<string, object> data = (Dictionary<string, object>)obj;

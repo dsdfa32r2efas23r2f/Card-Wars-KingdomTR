@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class VersionCheckSceneController : MonoBehaviour
@@ -48,7 +48,7 @@ public class VersionCheckSceneController : MonoBehaviour
 
 	private object DeserializeJSON(string json)
 	{
-		return Json.Deserialize(json);
+		return LocalJsonUtils.DeserializeObject(json);
 	}
 
 	private void checkClientVersionCallback(KFFNetwork.WWWInfo wwwinfo, object resultObj, string err, object param)

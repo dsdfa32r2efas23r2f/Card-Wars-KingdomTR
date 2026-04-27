@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using JsonFx.Json;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class SQUtils
@@ -37,7 +37,7 @@ public class SQUtils
 		{
 			Debug.Log(ex.ToString());
 		}
-		Dictionary<string, object>[] array = JsonReader.Deserialize<Dictionary<string, object>[]>(value);
+		Dictionary<string, object>[] array = LocalJsonUtils.DeserializeDictionaryArray(value);
 		jsonCache.Add(foldername + fname, array);
 		return array;
 	}
@@ -61,7 +61,7 @@ public class SQUtils
 			Debug.Log("SQUtils:ReadUserData filePath - " + playerDataPath);
 			string empty = string.Empty;
 			empty = File.ReadAllText(playerDataPath);
-			return JsonReader.Deserialize<Dictionary<string, object>>(empty);
+			return LocalJsonUtils.DeserializeDictionary(empty);
 		}
 		catch (FileNotFoundException)
 		{
@@ -75,7 +75,7 @@ public class SQUtils
 		if (!(instance == null) && instance.IsLoggedIn())
 		{
 			string playerDataPath = instance.GetPlayerDataPath(fname);
-			string contents = JsonWriter.Serialize(data);
+			string contents = JsonConvert.SerializeObject(data);
 			File.WriteAllText(playerDataPath, contents);
 		}
 	}

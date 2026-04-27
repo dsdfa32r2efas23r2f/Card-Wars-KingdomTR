@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Allies;
-using MiniJSON;
+using Newtonsoft.Json;
 
 public class HelperItem
 {
@@ -87,7 +87,7 @@ public class HelperItem
 		IsAlly = TFUtils.LoadInt(dict, "IsAlly", 0);
 		HelperRank = TFUtils.LoadInt(dict, "Rank", 0);
 		string json = TFUtils.LoadString(dict, "HelperCreature", string.Empty);
-		Dictionary<string, object> dict2 = Json.Deserialize(json) as Dictionary<string, object>;
+		Dictionary<string, object> dict2 = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 		HelperCreature = new InventorySlotItem(new CreatureItem(dict2, true));
 	}
 }

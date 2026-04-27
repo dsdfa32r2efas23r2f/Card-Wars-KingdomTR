@@ -747,8 +747,22 @@ public class StoreScreenController : Singleton<StoreScreenController>
 	private static void ExecGrantProduct(string productId, bool skipHardCurrencyTick)
 	{
 		CurrencyPackageData data = CurrencyPackageDataManager.Instance.GetData(productId);
+		if (data == null)
+		{
+			List<CurrencyPackageData> database = CurrencyPackageDataManager.Instance.GetDatabase();
+			for (int i = 0; i < database.Count; i++)
+			{
+				CurrencyPackageData currencyPackageData = database[i];
+				if (currencyPackageData != null && !string.IsNullOrEmpty(currencyPackageData.ID) && string.Equals(currencyPackageData.ID, productId, StringComparison.OrdinalIgnoreCase))
+				{
+					data = currencyPackageData;
+					break;
+				}
+			}
+		}
 		if (data != null)
 		{
+			Debug.Log(string.Format("StoreScreenController::ExecGrantProduct grant id={0}, paid={1}, free={2}, social={3}, soft={4}", productId, data.PaidHardCurrency, data.FreeHardCurrency, data.SocialCurrency, data.SoftCurrency));
 			PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
 			if (mProductIdBeingPurchased != null)
 			{
@@ -761,6 +775,11 @@ public class StoreScreenController : Singleton<StoreScreenController>
 			saveData.PvPCurrency += data.SocialCurrency;
 			saveData.SoftCurrency += data.SoftCurrency;
 			mProductIdBeingPurchased = null;
+			Singleton<BusyIconPanelController>.Instance.Hide();
+		}
+		else
+		{
+			Debug.LogError("StoreScreenController::ExecGrantProduct failed, package not found for productId=" + productId);
 			Singleton<BusyIconPanelController>.Instance.Hide();
 		}
 	}

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using DarkTonic.MasterAudio;
-using JsonFx.Json;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class BattleCharacterAnimState : MonoBehaviour
@@ -394,7 +394,7 @@ public class BattleCharacterAnimState : MonoBehaviour
 		string json = www.text;
 		if (!string.IsNullOrEmpty(json))
 		{
-			Dictionary<string, object>[] data = JsonReader.Deserialize<Dictionary<string, object>[]>(json);
+			Dictionary<string, object>[] data = JsonConvert.DeserializeObject<Dictionary<string, object>[]>(json);
 			if (data != null || data.Count() > 0)
 			{
 				yield return null;

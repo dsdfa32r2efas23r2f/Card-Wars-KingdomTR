@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class KFFSocialManager : Singleton<KFFSocialManager>

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Allies;
 using Messages;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class MailController : Singleton<MailController>
@@ -129,7 +129,7 @@ public class MailController : Singleton<MailController>
 		}
 		foreach (string adminMessage in adminMailList)
 		{
-			Dictionary<string, object> dict = Json.Deserialize(adminMessage) as Dictionary<string, object>;
+			Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(adminMessage);
 			MailData data = new MailData();
 			MailItem item = new MailItem(MailType.AdminMessage);
 			item.HardQuantity = int.Parse(dict["hard_currency"].ToString());

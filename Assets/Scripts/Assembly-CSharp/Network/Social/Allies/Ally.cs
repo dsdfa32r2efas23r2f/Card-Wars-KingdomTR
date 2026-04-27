@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using MiniJSON;
+using Newtonsoft.Json;
 
 namespace Allies
 {
@@ -385,7 +385,7 @@ namespace Allies
 			List<AllyData> list = new List<AllyData>();
 			List<string> list2 = new List<string>();
 			Dictionary<string, object> dictionary = new Dictionary<string, object>();
-			List<object> list3 = (List<object>)Json.Deserialize(json_data);
+			List<object> list3 = LocalJsonUtils.DeserializeList(json_data);
 			foreach (object item3 in list3)
 			{
 				Dictionary<string, object> dictionary2 = (Dictionary<string, object>)item3;
@@ -411,7 +411,7 @@ namespace Allies
 						string text7 = text6.Substring(text6.IndexOf(":") + 1);
 						string text8 = text7.Substring(text7.IndexOf("\"") + 1);
 						string value = text8.Substring(0, text8.LastIndexOf("\""));
-						Dictionary<string, object> dictionary5 = (Dictionary<string, object>)Json.Deserialize(text5);
+						Dictionary<string, object> dictionary5 = JsonConvert.DeserializeObject<Dictionary<string, object>>(text5);
 						dictionary4.Add("name", dictionary5["name"]);
 						dictionary4.Add("icon", dictionary5["icon"]);
 						dictionary4.Add("leader", dictionary5["leader"]);
@@ -436,7 +436,7 @@ namespace Allies
 						string text12 = text11.Substring(text11.IndexOf(":") + 1);
 						string text13 = text12.Substring(text12.IndexOf("\"") + 1);
 						string value2 = text13.Substring(0, text13.LastIndexOf("\""));
-						Dictionary<string, object> dictionary7 = (Dictionary<string, object>)Json.Deserialize(text10);
+						Dictionary<string, object> dictionary7 = JsonConvert.DeserializeObject<Dictionary<string, object>>(text10);
 						dictionary6.Add("name", dictionary7["name"]);
 						dictionary6.Add("icon", dictionary7["icon"]);
 						dictionary6.Add("leader", dictionary7["leader"]);
@@ -460,7 +460,7 @@ namespace Allies
 			List<AllyData> list = new List<AllyData>();
 			List<string> list2 = new List<string>();
 			Dictionary<string, object> dictionary = new Dictionary<string, object>();
-			List<object> list3 = (List<object>)Json.Deserialize(json_data);
+			List<object> list3 = LocalJsonUtils.DeserializeList(json_data);
 			if (list3 != null)
 			{
 				foreach (object item3 in list3)
@@ -507,13 +507,13 @@ namespace Allies
 			{
 				return text;
 			}
-			return MiniJSON.Json.Serialize(obj);
+			return JsonConvert.SerializeObject(obj);
 		}
 
 		private static AllyData DecodeOneAllyInfoOld(string user_id, AllyStatus friendstatus, string json_data)
 		{
 			Dictionary<string, object> dictionary = new Dictionary<string, object>();
-			List<object> list = (List<object>)Json.Deserialize(json_data);
+			List<object> list = LocalJsonUtils.DeserializeList(json_data);
 			foreach (object item in list)
 			{
 				Dictionary<string, object> dictionary2 = (Dictionary<string, object>)item;
@@ -534,7 +534,7 @@ namespace Allies
 						string text6 = text5.Substring(text5.IndexOf(":") + 1);
 						string text7 = text6.Substring(text6.IndexOf("\"") + 1);
 						string value = text7.Substring(0, text7.LastIndexOf("\""));
-						Dictionary<string, object> dictionary5 = (Dictionary<string, object>)Json.Deserialize(text4);
+						Dictionary<string, object> dictionary5 = JsonConvert.DeserializeObject<Dictionary<string, object>>(text4);
 						dictionary4.Add("name", dictionary5["name"]);
 						dictionary4.Add("icon", dictionary5["icon"]);
 						dictionary4.Add("leader", dictionary5["leader"]);
@@ -557,7 +557,7 @@ namespace Allies
 						string text11 = text10.Substring(text10.IndexOf(":") + 1);
 						string text12 = text11.Substring(text11.IndexOf("\"") + 1);
 						string value2 = text12.Substring(0, text12.LastIndexOf("\""));
-						Dictionary<string, object> dictionary7 = (Dictionary<string, object>)Json.Deserialize(text9);
+						Dictionary<string, object> dictionary7 = JsonConvert.DeserializeObject<Dictionary<string, object>>(text9);
 						dictionary6.Add("name", dictionary7["name"]);
 						dictionary6.Add("icon", dictionary7["icon"]);
 						dictionary6.Add("leader", dictionary7["leader"]);

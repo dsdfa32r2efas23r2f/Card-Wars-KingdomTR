@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using MiniJSON;
+using Newtonsoft.Json;
 
 public class SQServer
 {
@@ -181,7 +181,7 @@ public class SQServer
 		dictionary["handle"] = hashString;
 		Dictionary<string, object> dictionary2 = new Dictionary<string, object>();
 		dictionary2["fields"] = dictionary;
-		string data = "[" + MiniJSON.Json.Serialize(dictionary2) + "]";
+		string data = "[" + JsonConvert.SerializeObject(dictionary2) + "]";
 		callback(Json(true, data), HttpStatusCode.OK);
 	}
 
@@ -289,7 +289,7 @@ public class SQServer
 		Dictionary<string, object> dictionary2 = new Dictionary<string, object>();
 		dictionary2["fields"] = dictionary;
 		List<object> list = new List<object> { dictionary2 };
-		return MiniJSON.Json.Serialize(list);
+		return JsonConvert.SerializeObject(list);
 	}
 }
 

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using MiniJSON;
+using Newtonsoft.Json;
 
 public class LeaderItem
 {
@@ -37,7 +37,7 @@ public class LeaderItem
 			list.Add(ownedSkin.ID);
 		}
 		dictionary.Add("OwnedSkins", list);
-		return Json.Serialize(dictionary);
+		return JsonConvert.SerializeObject(dictionary);
 	}
 
 	private void Deserialize(Dictionary<string, object> dict)

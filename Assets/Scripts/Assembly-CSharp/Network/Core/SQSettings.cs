@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class SQSettings
@@ -114,13 +114,13 @@ public class SQSettings
 		string empty = string.Empty;
 		string streamingAssetsFile = TFUtils.GetStreamingAssetsFile("server_settings.json");
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : getJsonPath(streamingAssetsFile));
-		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
+		Dictionary<string, object> dictionary = LocalJsonUtils.DeserializeDictionary(empty);
 		serverUrl = (string)dictionary["server_url"];
 		photonChatAppID = (string)dictionary["photon_chat_app_id"];
 		photonPUNAppID = (string)dictionary["photon_pun_app_id"];
 		streamingAssetsFile = TFUtils.GetStreamingAssetsFile("global_settings.json");
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : getJsonPath(streamingAssetsFile));
-		dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
+		dictionary = LocalJsonUtils.DeserializeDictionary(empty);
 		saveInterval = TFUtils.LoadInt(dictionary, "save_interval");
 		localDataRootUrl = BuildLocalDataRootUrl();
 		Debug.Log("SQSettings: local data root URL = " + localDataRootUrl);

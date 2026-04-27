@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class SLOTResourceManager : Singleton<SLOTResourceManager>
@@ -136,7 +136,7 @@ public class SLOTResourceManager : Singleton<SLOTResourceManager>
 		string empty = string.Empty;
 		string streamingAssetsFile = TFUtils.GetStreamingAssetsFile("asset_bundle_settings.json");
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : SQSettings.getJsonPath(streamingAssetsFile));
-		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
+		Dictionary<string, object> dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(empty);
 		assetBundleBaseURL = (string)dictionary["asset_bundle_url"];
 	}
 

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using JsonFx.Json;
-using MiniJSON;
+using Newtonsoft.Json;
+
 using UnityEngine;
 
 public class PlayerInfoScript : Singleton<PlayerInfoScript>
@@ -684,7 +684,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 
 	public Loadout PvPDeserialize(string loadout)
 	{
-		Dictionary<string, object> dictionary = JsonReader.Deserialize<Dictionary<string, object>>(loadout);
+		Dictionary<string, object> dictionary = LocalJsonUtils.DeserializeDictionary(loadout);
 		Loadout loadout2 = new Loadout();
 		List<CreatureItem> list = new List<CreatureItem>();
 		if (dictionary.ContainsKey("Creatures"))
@@ -738,7 +738,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 
 	public InventorySlotItem DeserializeHelperCreature(string helper)
 	{
-		Dictionary<string, object> dict = JsonReader.Deserialize<Dictionary<string, object>>(helper);
+		Dictionary<string, object> dict = LocalJsonUtils.DeserializeDictionary(helper);
 		CreatureItem creature = new CreatureItem(dict, true);
 		return new InventorySlotItem(creature);
 	}
@@ -750,7 +750,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			return;
 		}
 		NewSession = true;
-		Dictionary<string, object> dictionary = JsonReader.Deserialize<Dictionary<string, object>>(json);
+		Dictionary<string, object> dictionary = LocalJsonUtils.DeserializeDictionary(json);
 		SaveData.version = TFUtils.LoadInt(dictionary, "PlayerInfoVersion", 1);
 		if (SaveData.version >= 1)
 		{
@@ -1047,6 +1047,9 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 	public void InitNewSaveFile()
 	{
 		NewSession = true;
+		// Init can run after a failed deserialize on a non-empty SaveData instance.
+		// Ensure deterministic "new save" state and avoid duplicate-key exceptions.
+		SaveData.Unlocks.Clear();
 		ResetCreatureCollection();
 		ResetCardCollection();
 		ResetEvoMatCollection();
@@ -1059,8 +1062,8 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		SaveData.PvPCurrency = 0;
 		SaveData.InventorySpace = MiscParams.StartingInventorySpace;
 		SaveData.AllyBoxSpace = MiscParams.StartingAllyBoxSpace;
-		SaveData.Unlocks.Add("TBuilding_Quests", null);
-		SaveData.Unlocks.Add("Lab_Fusion", null);
+		SaveData.Unlocks["TBuilding_Quests"] = null;
+		SaveData.Unlocks["Lab_Fusion"] = null;
 		List<LeaderData> database = LeaderDataManager.Instance.GetDatabase();
 		foreach (LeaderData item2 in database)
 		{
@@ -1221,7 +1224,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		SaveData.Unlocks.Clear();
 		foreach (object obj in unlockArray)
 		{
-			SaveData.Unlocks.Add(Convert.ToString(obj), null);
+			SaveData.Unlocks[Convert.ToString(obj)] = null;
 		}
 	}
 
@@ -1450,7 +1453,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		stringBuilder.Append("[");
 		foreach (BattleHistory battleHistory in SaveData.BattleHistoryList)
 		{
-			stringBuilder.Append(Json.Serialize(battleHistory.ToJSONDictionary()) + ",");
+			stringBuilder.Append(JsonConvert.SerializeObject(battleHistory.ToJSONDictionary()) + ",");
 		}
 		stringBuilder.Append(']');
 		return stringBuilder.ToString();

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class KFFNetwork2 : MonoBehaviour
@@ -227,8 +227,7 @@ public class KFFNetwork2 : MonoBehaviour
 				{
 					try
 					{
-						object obj2 = Json.Deserialize(text2);
-						Dictionary<string, object> dictionary = obj2 as Dictionary<string, object>;
+						Dictionary<string, object> dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(text2);
 						KFFServerRequestResult kFFServerRequestResult = null;
 						if (dictionary != null)
 						{

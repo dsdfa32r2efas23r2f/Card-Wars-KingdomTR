@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class Player
@@ -138,7 +138,7 @@ public class Player
 			Directory.CreateDirectory(cacheDir);
 		}
 		string filename = CacheFile("user.json");
-		string data = LocalJsonUtils.NormalizeLikelyJson(Json.Serialize(ToDict()));
+		string data = LocalJsonUtils.NormalizeLikelyJson(JsonConvert.SerializeObject(ToDict()));
 		TFUtils.WriteFile(filename, data);
 		TFUtils.WriteFile(LAST_PLAYED_FILE, PlayerFolder());
 	}
@@ -154,7 +154,7 @@ public class Player
 	private static Player LoadFromFile(string filePath)
 	{
 		string json = TFUtils.ReadFile(filePath);
-		Dictionary<string, object> data = (Dictionary<string, object>)Json.Deserialize(json);
+		Dictionary<string, object> data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 		return LoadFromDataDict(data);
 	}
 

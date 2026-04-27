@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [Serializable]
@@ -1594,53 +1594,52 @@ public class PlayerSaveData
 			return null;
 		}
 		object obj = data["data"];
-		if (obj is Dictionary<string, object>)
+		Dictionary<string, object> dictionary = TryExtractFieldsFromContainer(obj);
+		if (dictionary != null)
 		{
-			Dictionary<string, object> dictionary = (Dictionary<string, object>)obj;
-			if (dictionary.ContainsKey("fields") && dictionary["fields"] is Dictionary<string, object>)
-			{
-				return (Dictionary<string, object>)dictionary["fields"];
-			}
-			return null;
-		}
-		if (obj is List<object>)
-		{
-			List<object> list = (List<object>)obj;
-			if (list.Count > 0 && list[0] is Dictionary<string, object>)
-			{
-				Dictionary<string, object> dictionary2 = (Dictionary<string, object>)list[0];
-				if (dictionary2.ContainsKey("fields") && dictionary2["fields"] is Dictionary<string, object>)
-				{
-					return (Dictionary<string, object>)dictionary2["fields"];
-				}
-			}
-			return null;
+			return dictionary;
 		}
 		string text = obj as string;
 		if (string.IsNullOrEmpty(text))
 		{
 			return null;
 		}
-		object obj2 = Json.Deserialize(text);
-		if (obj2 is Dictionary<string, object>)
+		object obj2 = LocalJsonUtils.DeserializeObject(text);
+		return TryExtractFieldsFromContainer(obj2);
+	}
+
+	private static Dictionary<string, object> TryExtractFieldsFromContainer(object container)
+	{
+		if (container == null)
 		{
-			Dictionary<string, object> dictionary3 = (Dictionary<string, object>)obj2;
-			if (dictionary3.ContainsKey("fields") && dictionary3["fields"] is Dictionary<string, object>)
-			{
-				return (Dictionary<string, object>)dictionary3["fields"];
-			}
+			return null;
 		}
-		else if (obj2 is List<object>)
+		if (container is Dictionary<string, object>)
 		{
-			List<object> list2 = (List<object>)obj2;
-			if (list2.Count > 0 && list2[0] is Dictionary<string, object>)
+			Dictionary<string, object> dictionary = (Dictionary<string, object>)container;
+			if (dictionary.ContainsKey("fields") && dictionary["fields"] is Dictionary<string, object>)
 			{
-				Dictionary<string, object> dictionary4 = (Dictionary<string, object>)list2[0];
-				if (dictionary4.ContainsKey("fields") && dictionary4["fields"] is Dictionary<string, object>)
-				{
-					return (Dictionary<string, object>)dictionary4["fields"];
-				}
+				return (Dictionary<string, object>)dictionary["fields"];
 			}
+			return null;
+		}
+		if (container is List<object>)
+		{
+			List<object> list = (List<object>)container;
+			if (list.Count > 0)
+			{
+				return TryExtractFieldsFromContainer(list[0]);
+			}
+			return null;
+		}
+		if (container is object[])
+		{
+			object[] array = (object[])container;
+			if (array.Length > 0)
+			{
+				return TryExtractFieldsFromContainer(array[0]);
+			}
+			return null;
 		}
 		return null;
 	}

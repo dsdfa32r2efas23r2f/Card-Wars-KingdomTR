@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using JsonFx.Json;
+using Newtonsoft.Json;
 
 namespace Allies
 {
@@ -213,7 +213,7 @@ namespace Allies
 		{
 			if (!string.IsNullOrEmpty(json))
 			{
-				Dictionary<string, object> dictionary = JsonReader.Deserialize<Dictionary<string, object>>(json);
+				Dictionary<string, object> dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 				id = TFUtils.LoadString(dictionary, "id", string.Empty);
 				name = TFUtils.LoadString(dictionary, "name", string.Empty);
 				icon = TFUtils.LoadString(dictionary, "icon", string.Empty);

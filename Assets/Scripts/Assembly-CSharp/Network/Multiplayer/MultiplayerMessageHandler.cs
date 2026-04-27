@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class MultiplayerMessageHandler : Singleton<MultiplayerMessageHandler>
@@ -560,7 +560,7 @@ public class MultiplayerMessageHandler : Singleton<MultiplayerMessageHandler>
 
 	public void ReceiveMessage(string jsonString)
 	{
-		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(jsonString);
+		Dictionary<string, object> dictionary = LocalJsonUtils.DeserializeDictionary(jsonString);
 		switch (Convert.ToInt32(dictionary["Type"]))
 		{
 		case 0:
@@ -593,7 +593,7 @@ public class MultiplayerMessageHandler : Singleton<MultiplayerMessageHandler>
 		{
 			return;
 		}
-		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(jsonString);
+		Dictionary<string, object> dictionary = LocalJsonUtils.DeserializeDictionary(jsonString);
 		string text = Convert.ToString(dictionary["SenderID"]);
 		if (!(text == Singleton<PlayerInfoScript>.Instance.GetPlayerCode()))
 		{

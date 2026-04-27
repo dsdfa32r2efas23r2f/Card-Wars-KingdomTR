@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
+using Newtonsoft.Json;
 
 namespace DW_Leaderboards
 {
@@ -26,7 +26,7 @@ namespace DW_Leaderboards
 		{
 			List<LeaderboardData> list = new List<LeaderboardData>();
 			Dictionary<string, object> dictionary = new Dictionary<string, object>();
-			IList list2 = (IList)Json.Deserialize(json_data);
+			IList list2 = JsonConvert.DeserializeObject<IList>(json_data);
 			foreach (IDictionary item in list2)
 			{
 				int position = (int)item["ranking"];

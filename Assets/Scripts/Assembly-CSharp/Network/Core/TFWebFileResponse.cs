@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
-using MiniJSON;
+using Newtonsoft.Json;
 
 public class TFWebFileResponse
 {
@@ -20,7 +20,7 @@ public class TFWebFileResponse
 	{
 		if (Data != null)
 		{
-			return (Dictionary<string, object>)Json.Deserialize(Data);
+			return LocalJsonUtils.DeserializeDictionary(Data);
 		}
 		return null;
 	}

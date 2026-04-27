@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class SLOTGame : Singleton<SLOTGame>
@@ -86,7 +86,7 @@ public class SLOTGame : Singleton<SLOTGame>
 
 	private object DeserializeJSON(string json)
 	{
-		return Json.Deserialize(json);
+		return LocalJsonUtils.DeserializeObject(json);
 	}
 
 	public static byte[] StringToBytes(string str)

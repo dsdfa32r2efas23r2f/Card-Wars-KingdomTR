@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using MiniJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class Game
@@ -260,7 +260,7 @@ public class Game
 		}
 		try
 		{
-			return Json.Deserialize(json) != null;
+			return JsonConvert.DeserializeObject<object>(json) != null;
 		}
 		catch (Exception)
 		{
