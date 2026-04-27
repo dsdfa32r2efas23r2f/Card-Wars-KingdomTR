@@ -69,7 +69,8 @@ public class FriendListItem : UIStreamingGridListItem
 	public override void Populate(object dataObj)
 	{
 		Friend = dataObj as FriendList.GameFriend;
-		StartCoroutine(LoadPicture(Friend.AvatarURL, OnLoadPictureFinished));
+		// Offline build: skip remote avatar fetch.
+		OnLoadPictureFinished(null);
 		LabelName.text = Friend.Name;
 		LabelCurrentRank.text = string.Empty;
 		LabelRankPoints.text = string.Empty;
@@ -88,13 +89,18 @@ public class FriendListItem : UIStreamingGridListItem
 
 	private IEnumerator LoadPicture(string url, LoadPictureCallback callback)
 	{
-		WWW www = new WWW(url);
-		yield return www;
-		callback(www.texture);
+		yield return null;
+		if (callback != null)
+		{
+			callback(null);
+		}
 	}
 
 	private void OnLoadPictureFinished(Texture texture)
 	{
-		Avatar.mainTexture = texture;
+		if (texture != null)
+		{
+			Avatar.mainTexture = texture;
+		}
 	}
 }

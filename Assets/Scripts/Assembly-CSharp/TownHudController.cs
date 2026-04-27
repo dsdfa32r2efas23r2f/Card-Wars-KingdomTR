@@ -427,7 +427,7 @@ public class TownHudController : Singleton<TownHudController>
 			}
 			else
 			{
-				uIBarObject.gameObject.SetActive(Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(uIBarObject.mBuilding.BuildingId));
+				uIBarObject.gameObject.SetActive(IsBuildingAvailableInHud(uIBarObject.mBuilding.BuildingId));
 			}
 		}
 		ExpeditionsButton.SetActive(Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked("Expedition"));
@@ -455,7 +455,7 @@ public class TownHudController : Singleton<TownHudController>
 		for (int i = 0; i < UIBarObjects.Count; i++)
 		{
 			FrontEndBuildingUIBar component = UIBarObjects[i].GetComponent<FrontEndBuildingUIBar>();
-			if (component != null && Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(component.mBuilding.BuildingId))
+			if (component != null && IsBuildingAvailableInHud(component.mBuilding.BuildingId))
 			{
 				UIBarObjects[i].ShowTween.Play();
 				UIBarObjects[i].TryToShowAttract();
@@ -477,12 +477,21 @@ public class TownHudController : Singleton<TownHudController>
 		for (int i = 0; i < UIBarObjects.Count; i++)
 		{
 			FrontEndBuildingUIBar component = UIBarObjects[i].GetComponent<FrontEndBuildingUIBar>();
-			if (component != null && Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(component.mBuilding.BuildingId))
+			if (component != null && IsBuildingAvailableInHud(component.mBuilding.BuildingId))
 			{
 				UIBarObjects[i].HideTween.Play();
 			}
 		}
 		CancelInvoke("PlayBadgeGlint");
+	}
+
+	private static bool IsBuildingAvailableInHud(string buildingId)
+	{
+		if (string.Equals(buildingId, "TBuilding_Store", StringComparison.Ordinal))
+		{
+			return true;
+		}
+		return Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(buildingId);
 	}
 
 	public void OnClickSettings()

@@ -41,9 +41,9 @@ public class VersionCheckSceneController : MonoBehaviour
 
 	private void CheckClientVersion()
 	{
-		KFFNetwork.deserializeJSONCallback = DeserializeJSON;
-		string url = SQSettings.SERVER_URL + "static/version.txt";
-		KFFNetwork.GetInstance().SendWWWRequestWithForm(null, url, checkClientVersionCallback, null, true);
+		// Offline build: skip remote version check and continue startup flow.
+		Debug.Log("[OFFLINE_BOOT] Skip remote version check.");
+		DetachedSingleton<SceneFlowManager>.Instance.LoadAssetBundleSceneDirect();
 	}
 
 	private object DeserializeJSON(string json)

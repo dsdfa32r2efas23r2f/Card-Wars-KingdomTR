@@ -100,8 +100,6 @@ public class MiscParams : DataManager<DummyData>
 
 	private bool _ForceDisableDebug;
 
-	private bool _UseGooglePlayKFFKey;
-
 	private int _MultiplayerUnrankedSearchRange;
 
 	private int _MultiplayerUnrankedSearchRange2nd;
@@ -706,14 +704,6 @@ public class MiscParams : DataManager<DummyData>
 		}
 	}
 
-	public static bool UseGooglePlayKFFKey
-	{
-		get
-		{
-			return Instance._UseGooglePlayKFFKey;
-		}
-	}
-
 	public static int MultiplayerUnrankedSearchRange
 	{
 		get
@@ -1186,7 +1176,6 @@ public class MiscParams : DataManager<DummyData>
 		_StarThreshold2 = TFUtils.LoadInt(dictionary, "2StarThreshold", 2);
 		_StarThreshold1 = TFUtils.LoadInt(dictionary, "1StarThreshold", 3);
 		_ForceDisableDebug = TFUtils.LoadBool(dictionary, "ForceDisableDebug", false);
-		_UseGooglePlayKFFKey = TFUtils.LoadBool(dictionary, "UseGooglePlayKFFKey", false);
 		_MultiplayerUnrankedSearchRange = TFUtils.LoadInt(dictionary, "MultiplayerUnrankedSearchRange", 1);
 		_MultiplayerUnrankedSearchRange2nd = TFUtils.LoadInt(dictionary, "MultiplayerUnrankedSearchRange2ndPath", 2);
 		_MultiplayerUnrankedSearchRange3rd = TFUtils.LoadInt(dictionary, "MultiplayerUnrankedSearchRange3rdPath", 3);

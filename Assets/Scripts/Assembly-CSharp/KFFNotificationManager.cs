@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Prime31;
 using UnityEngine;
 
 public class KFFNotificationManager : Singleton<KFFNotificationManager>

@@ -554,7 +554,8 @@ public class TownController : Singleton<TownController>
 		TownBuildingScript[] array2 = array;
 		foreach (TownBuildingScript townBuildingScript in array2)
 		{
-			townBuildingScript.BuildingLockOnMeshes(Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(townBuildingScript.BuildingId));
+			bool unlock = string.Equals(townBuildingScript.BuildingId, "TBuilding_Store", StringComparison.Ordinal) || Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(townBuildingScript.BuildingId);
+			townBuildingScript.BuildingLockOnMeshes(unlock);
 		}
 	}
 

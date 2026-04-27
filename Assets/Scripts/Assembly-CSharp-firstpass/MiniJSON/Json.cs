@@ -328,13 +328,21 @@ namespace MiniJSON {
 
             char PeekChar {
                 get {
-                    return Convert.ToChar(json.Peek());
+                    int num = json.Peek();
+                    if (num < 0) {
+                        return '\0';
+                    }
+                    return Convert.ToChar(num);
                 }
             }
 
             char NextChar {
                 get {
-                    return Convert.ToChar(json.Read());
+                    int num = json.Read();
+                    if (num < 0) {
+                        return '\0';
+                    }
+                    return Convert.ToChar(num);
                 }
             }
 

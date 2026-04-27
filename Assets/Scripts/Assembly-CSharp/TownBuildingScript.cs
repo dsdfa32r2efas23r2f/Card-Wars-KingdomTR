@@ -59,7 +59,7 @@ public class TownBuildingScript : MonoBehaviour
 		{
 			return;
 		}
-		if (!Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(BuildingId))
+		if (!IsBuildingUnlockedForTown(BuildingId))
 		{
 			Singleton<TownHudController>.Instance.ShowLockedBuilding(mBuilding);
 			return;
@@ -150,7 +150,7 @@ public class TownBuildingScript : MonoBehaviour
 		}
 		if (Singleton<TownController>.Instance.UseRealtimeLockColorUpdate)
 		{
-			bool unlock = Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(BuildingId);
+			bool unlock = IsBuildingUnlockedForTown(BuildingId);
 			BuildingLockOnMeshes(unlock);
 		}
 		if (!mWaitForUserAction)
@@ -381,5 +381,14 @@ public class TownBuildingScript : MonoBehaviour
 			{
 			}
 		}
+	}
+
+	private static bool IsBuildingUnlockedForTown(string buildingId)
+	{
+		if (string.Equals(buildingId, "TBuilding_Store", StringComparison.Ordinal))
+		{
+			return true;
+		}
+		return Singleton<PlayerInfoScript>.Instance.IsFeatureUnlocked(buildingId);
 	}
 }

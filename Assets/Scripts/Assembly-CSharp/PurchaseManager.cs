@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using JsonFx.Json;
-using Prime31;
 using UnityEngine;
 
 public class PurchaseManager : Singleton<PurchaseManager>
@@ -52,8 +50,10 @@ public class PurchaseManager : Singleton<PurchaseManager>
 
 		public override string ToString()
 		{
-			GooglePurchase googlePurchase = (GooglePurchase)NativeTransaction;
-			return string.Format("<GooglePurchase> ID: {0}, type: {1}, transactionIdentifier: {2}", googlePurchase.productId, googlePurchase.type, googlePurchase.orderId);
+			string text = PurchaseManager.GetTransactionField(NativeTransaction, "productId");
+			string text2 = PurchaseManager.GetTransactionField(NativeTransaction, "type");
+			string text3 = PurchaseManager.GetTransactionField(NativeTransaction, "orderId");
+			return string.Format("<Transaction> ID: {0}, type: {1}, transactionIdentifier: {2}", text, text2, text3);
 		}
 	}
 
@@ -62,8 +62,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 	public delegate void FinalProductPurchaseCallback(ProductPurchaseResult result);
 
 	public delegate void ProductPurchaseCallback(ProductPurchaseResult result, TransactionData transaction, string err);
-
-	public delegate void VerifyIAPReceiptCallback(KFFNetwork.WWWInfo wwwinfo, object resultObj, string err, object param, string hash);
 
 	public delegate void RestorePurchasesCallback(bool success);
 
@@ -81,8 +79,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 
 	private FinalProductPurchaseCallback m_PurchaseCallback;
 
-	private KFFNetwork.WWWInfo m_VerifyPurchase;
-
 	private static int m_VerifyPurchaseHandle = -1;
 
 	private ProductData m_RequestedProduct;
@@ -93,8 +89,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 
 	private bool m_success;
 
-	public string m_partial = "4294246h";
-
 	private string m_oldReceipt;
 
 	private static string m_OldPurchaseProduct = string.Empty;
@@ -102,10 +96,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 	private static bool m_WaitForOldPurchase;
 
 	private static bool m_WaitForOldConsume;
-
-	public static string CHECK_CLIENT_VERSION_URL = "https://iap-loadbalancer.kffgames.com/DragonWars/IAPReceiptVerificationServer/check_client_version.php";
-
-	public static string CHECK_ASSET_DOWNLOADS_URL = "https://iap-loadbalancer.kffgames.com/DragonWars/IAPReceiptVerificationServer/check_asset_downloads.php";
 
 	public bool InPurchaseProcess
 	{
@@ -133,30 +123,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 			int verifyPurchaseHandle = m_VerifyPurchaseHandle;
 			m_VerifyPurchaseHandle = -1;
 			return verifyPurchaseHandle;
-		}
-	}
-
-	public static string IAP_VERIFICATION_SERVER_URL
-	{
-		get
-		{
-			return "https://iap-loadbalancer.kffgames.com/DragonWars/IAPReceiptVerificationServer";
-		}
-	}
-
-	public static bool IAP_SANDBOX
-	{
-		get
-		{
-			switch (Application.platform)
-			{
-			case RuntimePlatform.IPhonePlayer:
-				return false;
-			case RuntimePlatform.Android:
-				return MiscParams.UseGooglePlayKFFKey;
-			default:
-				return false;
-			}
 		}
 	}
 
@@ -229,7 +195,7 @@ public class PurchaseManager : Singleton<PurchaseManager>
 	{
 		UnityEngine.Object.DontDestroyOnLoad(this);
 		DetectAmazonDevice();
-		m_Listener = new GooglePurchaseListener();
+		m_Listener = new OfflinePurchaseListener();
 	}
 
 	private void OnEnable()
@@ -276,7 +242,7 @@ public class PurchaseManager : Singleton<PurchaseManager>
 		if (m_WaitForOldConsume)
 		{
 			m_WaitForOldConsume = false;
-			GoogleIAB.consumeProduct(m_OldPurchaseProduct);
+			Debug.Log("[IAP_DISABLED] Skip old purchase consume for product: " + m_OldPurchaseProduct);
 		}
 	}
 
@@ -324,22 +290,26 @@ public class PurchaseManager : Singleton<PurchaseManager>
 		{
 		case ProductPurchaseResult.Success:
 		{
-			string empty = string.Empty;
-			string empty2 = string.Empty;
-			string empty3 = string.Empty;
-			GooglePurchase googlePurchase = (GooglePurchase)transaction.NativeTransaction;
-			empty = googlePurchase.originalJson;
-			empty2 = googlePurchase.productId;
-			empty3 = googlePurchase.signature;
-			if (empty == m_oldReceipt)
+			string transactionField = GetTransactionField(transaction.NativeTransaction, "originalJson");
+			string transactionField2 = GetTransactionField(transaction.NativeTransaction, "productId");
+			string transactionField3 = GetTransactionField(transaction.NativeTransaction, "signature");
+			if (string.IsNullOrEmpty(transactionField2))
+			{
+				transactionField2 = ((m_RequestedProduct != null) ? m_RequestedProduct.ProductIdentifier : string.Empty);
+			}
+			if (string.IsNullOrEmpty(transactionField))
+			{
+				transactionField = "offline-receipt-" + transactionField2;
+			}
+			if (transactionField == m_oldReceipt)
 			{
 				m_PurchaseCallback(ProductPurchaseResult.Cancelled);
 				break;
 			}
-			m_oldReceipt = googlePurchase.originalJson;
+			m_oldReceipt = transactionField;
 			Session theSession = SessionManager.Instance.theSession;
 			m_ReceiptVerificationEnd = false;
-			m_VerifyPurchaseHandle = Singleton<PurchaseManager>.Instance.VerifyReceiptGameServer(theSession, transaction, empty, empty2, empty3, m_partial, VerifyCallbackSet);
+			m_VerifyPurchaseHandle = Singleton<PurchaseManager>.Instance.VerifyReceiptGameServer(theSession, transaction, transactionField, transactionField2, transactionField3, string.Empty, VerifyCallbackSet);
 			break;
 		}
 		case ProductPurchaseResult.Failed:
@@ -368,27 +338,18 @@ public class PurchaseManager : Singleton<PurchaseManager>
 			m_PurchaseCallback(ProductPurchaseResult.VerificationFailed);
 			return;
 		}
-		TransactionData storeKit = m_storeKit;
-		string empty = string.Empty;
-		string empty2 = string.Empty;
-		string empty3 = string.Empty;
-		string text;
-		GooglePurchase googlePurchase = (GooglePurchase)m_storeKit.NativeTransaction;
-		text = googlePurchase.productId;
-		empty = googlePurchase.originalJson;
-		empty2 = googlePurchase.productId;
-		empty3 = googlePurchase.signature;
+		string transactionField = GetTransactionField(m_storeKit.NativeTransaction, "productId");
+		if (string.IsNullOrEmpty(transactionField))
+		{
+			transactionField = ((m_RequestedProduct != null) ? m_RequestedProduct.ProductIdentifier : string.Empty);
+		}
 		float Price;
 		string CurrencyType;
-		GetPriceInfo(text, out Price, out CurrencyType);
-		Singleton<PurchaseManager>.Instance.ConsumeProduct(text);
+		GetPriceInfo(transactionField, out Price, out CurrencyType);
+		Singleton<PurchaseManager>.Instance.ConsumeProduct(transactionField);
 		m_PurchaseCallback(ProductPurchaseResult.Success);
 		m_storeKit = null;
 		m_success = false;
-	}
-
-	private void VerifyCallback(KFFNetwork.WWWInfo wwwinfo, object resultObj, string err, object para, string hash)
-	{
 	}
 
 	public void ProcessOldPurchases()
@@ -424,15 +385,6 @@ public class PurchaseManager : Singleton<PurchaseManager>
 		{
 			m_Listener.RestorePurchases(callback);
 		}
-	}
-
-	public KFFNetwork.WWWInfo VerifyIAPReceipt(TransactionData transaction, VerifyIAPReceiptCallback callback)
-	{
-		if (m_Listener != null)
-		{
-			return m_Listener.VerifyIAPReceipt(transaction, callback);
-		}
-		return null;
 	}
 
 	public int VerifyReceiptGameServer(Session session, TransactionData transaction, string receipt, string productid, string transactionid, string partial, VerifyGMReceiptCallback callback)
@@ -484,5 +436,20 @@ public class PurchaseManager : Singleton<PurchaseManager>
 		}
 		string[] a_StringIDs = list.ToArray();
 		return GetProductData(a_StringIDs, a_Callback);
+	}
+
+	private static string GetTransactionField(object nativeTransaction, string key)
+	{
+		if (nativeTransaction == null || string.IsNullOrEmpty(key))
+		{
+			return string.Empty;
+		}
+		Dictionary<string, object> dictionary = nativeTransaction as Dictionary<string, object>;
+		object value = null;
+		if (dictionary != null && dictionary.TryGetValue(key, out value) && value != null)
+		{
+			return value.ToString();
+		}
+		return string.Empty;
 	}
 }

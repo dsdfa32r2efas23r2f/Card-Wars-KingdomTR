@@ -220,7 +220,8 @@ public class StoreScreenController : Singleton<StoreScreenController>
 	{
 		OpenedFromTown = true;
 		OpenToHeroes = true;
-		HardCurrencyTabButton.gameObject.SetActive(false);
+		// TODO(offline-store): keep hard currency tab visible in local/offline build.
+		HardCurrencyTabButton.gameObject.SetActive(true);
 		mDisplayedHardCurrency = Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency;
 		mHardCurrencyTickRate = 9999f;
 		StaminaRefillCost.text = MiscParams.StaminaRefillCost.ToString();
@@ -509,7 +510,12 @@ public class StoreScreenController : Singleton<StoreScreenController>
 						mHiddenFetchedList.Add(foundProductData);
 					}
 				}
+				else
+				{
+					Debug.LogWarning("StoreScreenController::ProductDataCallback package not found for productId=" + a_Product.ProductIdentifier);
+				}
 			}
+			Debug.Log(string.Format("StoreScreenController::ProductDataCallback fetched={0} hidden={1}", mFetchedList.Count, mHiddenFetchedList.Count));
 			ShowTween.Play();
 			StartCoroutine(JumpToTab());
 			mStoreGridDataSource.Init(StoreGrid, StoreEntryPrefab, mFetchedList);
@@ -786,12 +792,16 @@ public class StoreScreenController : Singleton<StoreScreenController>
 	private void PopulateDummyData()
 	{
 		List<PurchaseManager.ProductData> list = new List<PurchaseManager.ProductData>();
-		foreach (CurrencyPackageData item in CurrencyPackageDataManager.Instance.GetDatabase())
+		List<CurrencyPackageData> database = CurrencyPackageDataManager.Instance.GetDatabase();
+		Debug.Log("StoreScreenController::PopulateDummyData currency package rows=" + database.Count);
+		foreach (CurrencyPackageData item in database)
 		{
 			PurchaseManager.ProductData productData = new PurchaseManager.ProductData();
 			productData.ProductIdentifier = item.ID;
+			productData.Price = "0.00";
 			productData.FormattedPrice = "$0.00";
 			list.Add(productData);
+			Debug.Log(string.Format("StoreScreenController::PopulateDummyData add productId={0}, showInStore={1}, hard={2}, soft={3}", item.ID, item.ShowInStore, item.TotalHardCurrency, item.SoftCurrency));
 		}
 		ProductDataCallback(true, list, string.Empty);
 	}

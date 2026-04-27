@@ -108,19 +108,29 @@ public abstract class DataManager<T> : IDataManager where T : ILoadableData
 			}
 			CheckAndThrowExeptions();
 		}
-		WWW www = new WWW(FilePath);
+		string text = NormalizePathForWww(FilePath);
+		Debug.Log(string.Format("DataManager<{0}>::Load start path={1}", typeof(T).Name, text));
+		WWW www = new WWW(text);
 		while (!www.isDone)
 		{
 			yield return null;
 		}
+		if (!string.IsNullOrEmpty(www.error))
+		{
+			Exception ex2 = new Exception("Failed to load JSON via WWW: " + www.error);
+			ex2.Data.Add("Filename", text);
+			this.ex = ex2;
+			yield break;
+		}
 		string jsonText = www.text;
-		LoadAndParseJsonDataThread(null, jsonText);
+		LoadAndParseJsonDataThread(text, jsonText);
 		while (!doneLoadingAndParsingJsonData && !ExceptionThrown)
 		{
 			yield return null;
 		}
 		CheckAndThrowExeptions();
 		IsLoaded = true;
+		Debug.Log(string.Format("DataManager<{0}>::Load parsed rows={1}", typeof(T).Name, DatabaseArray.Count));
 		new Thread((ThreadStart)delegate
 		{
 			PostLoadThread();
@@ -163,6 +173,10 @@ public abstract class DataManager<T> : IDataManager where T : ILoadableData
 			try
 			{
 				doneLoadingAndParsingJsonData = false;
+				if (string.IsNullOrEmpty(wwwText))
+				{
+					throw new Exception("JSON content is empty.");
+				}
 
 				// Log the file path or URL being used to load the JSON data
             	Debug.Log($"Loading JSON data from: {appliedFilePath}");
@@ -185,9 +199,19 @@ public abstract class DataManager<T> : IDataManager where T : ILoadableData
 			catch (Exception ex)
 			{
 				ex.Data.Add("Filename", appliedFilePath);
+				ex.Data.Add("ManagerType", typeof(T).Name);
 				this.ex = ex;
 			}
 		}
+	}
+
+	private static string NormalizePathForWww(string path)
+	{
+		if (string.IsNullOrEmpty(path))
+		{
+			return path;
+		}
+		return path.Replace("\\", "/");
 	}
 
 	private void PostLoadThread()

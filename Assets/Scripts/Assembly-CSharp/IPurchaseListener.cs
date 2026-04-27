@@ -14,8 +14,6 @@ public interface IPurchaseListener
 
 	void ConsumeProduct(string a_productID);
 
-	KFFNetwork.WWWInfo VerifyIAPReceipt(PurchaseManager.TransactionData a_Transaction, PurchaseManager.VerifyIAPReceiptCallback a_Callback);
-
 	int VerifyReceiptGameServer(Session session, PurchaseManager.TransactionData transaction, string receipt, string productid, string transaction_id, string partial, PurchaseManager.VerifyGMReceiptCallback callback);
 
 	void ProcessOldPurchases();

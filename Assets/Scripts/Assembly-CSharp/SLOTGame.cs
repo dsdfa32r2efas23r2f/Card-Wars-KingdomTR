@@ -20,8 +20,6 @@ public class SLOTGame : Singleton<SLOTGame>
 
 	public delegate bool AssetBundleLoadedCallback(string url, AssetBundle bundle);
 
-	public const string CHECK_ASSET_DOWNLOADS_URL = "http://floop-iap-lb.kffgames.com/AdventureTime/CardWars/IAPReceiptVerificationServer/check_asset_downloads.php";
-
 	public const string ASSET_DOWNLOAD_SUBDIRECTORY = "data_1.01";
 
 	public static string CLIENT_VERSION = "1.0";
@@ -171,25 +169,13 @@ public class SLOTGame : Singleton<SLOTGame>
 
 	public void CheckAssetDownloads(CheckAssetDownloadsCallback callback, ShowAssetDownloadProgressCallback callback2, AssetBundleLoadedCallback callback3)
 	{
-		if (assetBundleType == AssetBundleType.Disabled)
+		// Offline build: do not hit legacy remote endpoint for asset download manifests.
+		if (callback != null)
 		{
-			if (callback != null)
-			{
-				callback(true, null);
-			}
-			return;
+			callback(true, null);
 		}
-		saveMaxReqCount = KFFNetwork.GetMaxConcurrentWWWRequestCount();
-		KFFNetwork.SetMaxConcurrentWWWRequestCount(1);
-		checkassetdownloadscallback = callback;
-		showprogresscallback = callback2;
-		assetbundleloadedcallback = callback3;
-		string text = "http://floop-iap-lb.kffgames.com/AdventureTime/CardWars/IAPReceiptVerificationServer/check_asset_downloads.php?lowend=" + (IsLowEndDevice() ? 1 : 0);
-		text += "&subdirectory=data_1.01";
-		text += "&platform=";
-		text += "Android";
-		text += "&json=1";
-		KFFNetwork.GetInstance().SendWWWRequest(text, checkAssetDownloadsCallback, null);
+		Debug.Log("[OFFLINE_ASSETS] Skip remote check_asset_downloads request.");
+		return;
 	}
 
 	private void checkAssetDownloadsCallback(KFFNetwork.WWWInfo wwwinfo, object resultObj, string err, object param)

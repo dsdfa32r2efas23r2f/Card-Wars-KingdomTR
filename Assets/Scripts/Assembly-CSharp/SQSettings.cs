@@ -9,6 +9,8 @@ public class SQSettings
 {
 	private static string serverUrl;
 
+	private static string localDataRootUrl;
+
 	private static string photonChatAppID;
 
 	private static string photonPUNAppID;
@@ -26,7 +28,7 @@ public class SQSettings
 	{
 		get
 		{
-			return serverUrl + "persist/static/";
+			return localDataRootUrl;
 		}
 	}
 
@@ -120,5 +122,18 @@ public class SQSettings
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : getJsonPath(streamingAssetsFile));
 		dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
 		saveInterval = TFUtils.LoadInt(dictionary, "save_interval");
+		localDataRootUrl = BuildLocalDataRootUrl();
+		Debug.Log("SQSettings: local data root URL = " + localDataRootUrl);
+	}
+
+	private static string BuildLocalDataRootUrl()
+	{
+		string text = TFUtils.GetStreamingAssetsPath();
+		text = text.Replace("\\", "/").TrimEnd('/');
+		if (!text.Contains("://"))
+		{
+			text = "file:///" + text;
+		}
+		return text + "/";
 	}
 }

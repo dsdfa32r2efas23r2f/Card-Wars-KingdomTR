@@ -1637,7 +1637,7 @@ public class MultiplayerMessageHandler : Singleton<MultiplayerMessageHandler>
 			InternetIsNotAvailable();
 			return;
 		}
-		mPing = new Ping("google.com");
-		mPingStartTime = Time.time;
+		// Offline-safe check: do not ping external host.
+		InternetAvailable();
 	}
 }
