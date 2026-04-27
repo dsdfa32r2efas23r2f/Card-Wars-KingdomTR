@@ -17,9 +17,8 @@ namespace Multiplayer
 				{
 					callback(null, ResponseFlag.Error);
 				}
-				else if (status == HttpStatusCode.OK && data.ContainsKey("success") && (bool)data["success"])
+				else if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
-					Dictionary<string, object> dict = (Dictionary<string, object>)data["data"];
 					callback(new MultiplayerData(dict), ResponseFlag.Success);
 				}
 				else if (status == HttpStatusCode.NotFound)
@@ -52,9 +51,8 @@ namespace Multiplayer
 					switch (status)
 					{
 					case HttpStatusCode.OK:
-						if (data.ContainsKey("success") && (bool)data["success"])
+						if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 						{
-							Dictionary<string, object> dict = (Dictionary<string, object>)data["data"];
 							callback(new MultiplayerData(dict), ResponseFlag.Success);
 						}
 						else
@@ -91,9 +89,7 @@ namespace Multiplayer
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
-					bool flag = data.ContainsKey("success") && (bool)data["success"];
-					List<object> data2 = (List<object>)data["data"];
-					if (flag)
+					if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 					{
 						callback(ExtendedRecordData.ProcessList(data2));
 						return;
@@ -108,9 +104,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (data != null && status == HttpStatusCode.OK && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
-					Dictionary<string, object> dict = (Dictionary<string, object>)data["data"];
 					callback(new RecentNotification(dict));
 				}
 				else
@@ -127,9 +122,7 @@ namespace Multiplayer
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
-					bool flag = data.ContainsKey("success") && (bool)data["success"];
-					List<object> data2 = (List<object>)data["data"];
-					if (flag)
+					if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 					{
 						callback(RecordData.ProcessList(data2));
 						return;
@@ -146,9 +139,7 @@ namespace Multiplayer
 			{
 				if (data != null && status == HttpStatusCode.OK)
 				{
-					bool flag = data.ContainsKey("success") && (bool)data["success"];
-					List<object> data2 = (List<object>)data["data"];
-					if (flag)
+					if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 					{
 						callback(RecordData.ProcessList(data2));
 						return;
@@ -163,9 +154,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
-					List<object> data2 = (List<object>)data["data"];
 					callback(RewardData.ProcessList(data2), ResponseFlag.Success);
 				}
 				else if (status == HttpStatusCode.NotFound)
@@ -184,9 +174,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data.ContainsKey("success") && data != null && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
-					List<object> data2 = (List<object>)data["data"];
 					callback(LeaderboardData.ProcessList(data2));
 				}
 				else
@@ -201,9 +190,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out List<object> data2))
 				{
-					List<object> data2 = (List<object>)data["data"];
 					callback(LeaderboardData.ProcessList(data2));
 				}
 				else
@@ -218,9 +206,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
-					Dictionary<string, object> dict = (Dictionary<string, object>)data["data"];
 					callback(new MatchData(dict), ResponseFlag.Success);
 				}
 				else
@@ -255,9 +242,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dictionary) && dictionary.ContainsKey("trophies"))
 				{
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)data["data"];
 					callback(dictionary["trophies"].ToString(), ResponseFlag.Success);
 				}
 				else if (status == HttpStatusCode.NotFound)
@@ -337,9 +323,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dict))
 				{
-					Dictionary<string, object> dict = (Dictionary<string, object>)data["data"];
 					callback(new TournamentData(dict), ResponseFlag.Success);
 				}
 				else
@@ -377,9 +362,8 @@ namespace Multiplayer
 		{
 			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 			{
-				if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
+				if (IsSuccessResponse(data, status) && TryGetDataAs(data, out Dictionary<string, object> dictionary) && dictionary.ContainsKey("rank"))
 				{
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)data["data"];
 					callback(dictionary["rank"].ToString(), ResponseFlag.Success);
 				}
 				else if (status == HttpStatusCode.NotFound)
@@ -392,6 +376,30 @@ namespace Multiplayer
 				}
 			};
 			session.Server.MultiplayerGetRank(global, callback2);
+		}
+
+		private static bool IsSuccessResponse(Dictionary<string, object> data, HttpStatusCode status)
+		{
+			if (status != HttpStatusCode.OK || data == null || !data.ContainsKey("success") || data["success"] == null)
+			{
+				return false;
+			}
+			if (data["success"] is bool flag)
+			{
+				return flag;
+			}
+			return bool.TryParse(Convert.ToString(data["success"]), out var result) && result;
+		}
+
+		private static bool TryGetDataAs<T>(Dictionary<string, object> data, out T value) where T : class
+		{
+			value = null;
+			if (data == null || !data.ContainsKey("data") || data["data"] == null)
+			{
+				return false;
+			}
+			value = data["data"] as T;
+			return value != null;
 		}
 
 		public static string GenerateRedeemCode(string id)

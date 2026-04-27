@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using MiniJSON;
 using UnityEngine;
 
 public class SQAuth
@@ -14,17 +13,9 @@ public class SQAuth
 
 	public delegate string LoadPlayerNameCallback();
 
-	private const string AUTH_REQUEST = "authRequest";
-
-	private const string DO_GC_AUTH = "do_gc_auth";
-
-	private const string SETTINGS = "settings";
-
 	public static bool g_reassignID;
 
 	public bool loggedIn;
-
-	private string currentNonce;
 
 	public static KFFSendWWWRequestWithFormCallback KFFSendWWWRequestWithFormFunction;
 
@@ -32,38 +23,13 @@ public class SQAuth
 
 	public void AuthUser(Session session, TFServer.JsonResponseHandler callback, bool doFacebookAuth, string fbAccessToken)
 	{
-		g_reassignID = false;
-		CheckNonce(session, callback, doFacebookAuth, fbAccessToken);
+		Player player = Player.LoadFromFilesystem();
+		Dictionary<string, object> dictionary = new Dictionary<string, object>();
+		Dictionary<string, object> dictionary2 = new Dictionary<string, object>();
+		dictionary2["user_id"] = player.playerId;
+		dictionary2["is_new"] = player.isNew;
+		dictionary["success"] = true;
+		dictionary["data"] = dictionary2;
+		callback(dictionary, HttpStatusCode.OK);
 	}
-
-	private void CheckNonce(Session session, TFServer.JsonResponseHandler callback, bool doFacebookAuth, string fbAccessToken)
-	{
-		if (currentNonce == null)
-		{
-			TFServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
-			{
-				if (status != HttpStatusCode.OK)
-				{
-					callback((Dictionary<string, object>)Json.Deserialize(TFServer.NETWORK_ERROR_JSON), status);
-				}
-				else
-				{
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)data["data"];
-					currentNonce = (string)dictionary["nonce"];
-					PlatformAuth(session, callback, doFacebookAuth, fbAccessToken);
-				}
-			};
-			session.Server.PreAuth(callback2);
-		}
-		else
-		{
-			PlatformAuth(session, callback, doFacebookAuth, fbAccessToken);
-		}
-	}
-
-	private void PlatformAuth(Session session, TFServer.JsonResponseHandler callback, bool doFacebookAuth, string fbAccessToken)
-	{
-		session.Server.GcLogin(TFUtils.FacebookID, TFUtils.FacebookID, currentNonce, callback);
-        session.Username = TFUtils.FacebookID;
-    }
 }

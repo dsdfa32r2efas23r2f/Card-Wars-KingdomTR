@@ -12,8 +12,6 @@ public class Game
 
 	private string gameFile;
 
-	private string myuserinfo;
-
 	private string myfriendslist;
 
 	private string myexplorerslist;
@@ -21,10 +19,6 @@ public class Game
 	private string myfriendrequests;
 
 	private Version myserverversion;
-
-	private List<string> mymessages = new List<string>();
-
-	private List<string> mymessageslist;
 
 	private bool _finishedAccess;
 
@@ -50,18 +44,6 @@ public class Game
 		}
 	}
 
-	public string MyUserInfo
-	{
-		get
-		{
-			return myuserinfo;
-		}
-		set
-		{
-			myuserinfo = value;
-		}
-	}
-
 	public Version MyServerVersion
 	{
 		get
@@ -71,30 +53,6 @@ public class Game
 		set
 		{
 			myserverversion = value;
-		}
-	}
-
-	public List<string> MyMessages
-	{
-		get
-		{
-			return mymessages;
-		}
-		set
-		{
-			mymessages = value;
-		}
-	}
-
-	public List<string> MyMessagesList
-	{
-		get
-		{
-			return mymessageslist;
-		}
-		set
-		{
-			mymessageslist = value;
 		}
 	}
 
@@ -148,97 +106,70 @@ public class Game
 	public void LoadFromNetwork(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.GetGameData(session.AsyncFileResponder(key));
+		HttpStatusCode statusCode = ((!File.Exists(gameFile)) ? HttpStatusCode.NotFound : HttpStatusCode.NotModified);
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(statusCode, string.Empty, session));
 	}
 
 	public void DeleteFromNetwork(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.DeleteGameData(session.AsyncFileResponder(key));
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void AssignFacebookIDToUser(string key, string facebookID, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.AssignFacebookIDToUser(session.AsyncFileResponder(key), facebookID);
-	}
-
-	public void SendMessage(string key, string to_id, string subject, string message, Session session)
-	{
-		_finishedAccess = false;
-		session.WebFileServer.SendMessage(session.AsyncFileResponder(key), to_id, subject, message, session);
-	}
-
-	public void DeleteMessage(string key, string msg_id, Session session)
-	{
-		_finishedAccess = false;
-		session.WebFileServer.DeleteMessage(session.AsyncFileResponder(key), msg_id, session);
-	}
-
-	public void GetMessage(string key, string id, Session session)
-	{
-		_finishedAccess = false;
-		session.WebFileServer.GetMessage(session.AsyncFileResponder(key), id);
-	}
-
-	public void GetMessagesList(string key, Session session)
-	{
-		_finishedAccess = false;
-		session.WebFileServer.GetMessageList(session.AsyncFileResponder(key));
-	}
-
-	public void GetUserInfo(string key, Session session)
-	{
-		_finishedAccess = false;
-		session.WebFileServer.GetUserInfo(session.AsyncFileResponder(key));
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void GetServerVersion(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.GetServerVersion(session.AsyncFileResponder(key));
+		string text = string.IsNullOrEmpty(SQSettings.BundleVersion) ? "1.0" : SQSettings.BundleVersion;
+		string data = "{\"version\":\"" + text + "\",\"android_version\":\"" + text + "\",\"ios_version\":\"" + text + "\",\"amazon_version\":\"" + text + "\",\"chat_switch\":\"1\"}";
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, data, session));
 	}
 
 	public void GetFriendsList(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.GetFriends(session.AsyncFileResponder(key));
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "[]", session));
 	}
 
 	public void GetExplorersList(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.GetExplorers(session.AsyncFileResponder(key));
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "[]", session));
 	}
 
 	public void GetFriendRequests(string key, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.GetFriendRequests(session.AsyncFileResponder(key));
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "[]", session));
 	}
 
 	public void ConfirmFriendRequest(string key, string id, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.ConfirmFriendRequest(session.AsyncFileResponder(key), id);
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void DenyFriendRequest(string key, string id, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.DenyFriendRequest(session.AsyncFileResponder(key), id);
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void RequestFriend(string key, string id, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.RequestFriend(session.AsyncFileResponder(key), id);
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void RemoveFriend(string key, string id, Session session)
 	{
 		_finishedAccess = false;
-		session.WebFileServer.RemoveFriend(session.AsyncFileResponder(key), id);
+		session.AddAsyncFileResponse(key, CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void SaveToServer(Session session, string gameData, TFWebFileServer.FileCallbackHandler callback = null)
@@ -259,7 +190,7 @@ public class Game
 				callback(response);
 			};
 		}
-		session.WebFileServer.SaveGameData(gameData, callback2, session);
+		callback2(CreateOfflineResponse(HttpStatusCode.OK, "{\"success\":true}", session));
 	}
 
 	public void saveCBHandler(TFWebFileResponse response)
@@ -339,7 +270,7 @@ public class Game
 
 	public bool GameExists(Player p)
 	{
-		return File.Exists("game.json");
+		return p != null && File.Exists(p.CacheFile("game.json"));
 	}
 
 	public void DestroyCache(Player p)
@@ -362,5 +293,16 @@ public class Game
 	public bool IsDoneServerAccess()
 	{
 		return _finishedAccess;
+	}
+
+	private static TFWebFileResponse CreateOfflineResponse(HttpStatusCode statusCode, string data, Session session)
+	{
+		return new TFWebFileResponse
+		{
+			StatusCode = statusCode,
+			Data = data,
+			NetworkDown = false,
+			UserData = session
+		};
 	}
 }

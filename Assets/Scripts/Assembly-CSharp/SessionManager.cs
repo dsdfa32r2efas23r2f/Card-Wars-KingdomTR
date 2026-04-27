@@ -56,10 +56,6 @@ public class SessionManager : Singleton<SessionManager>
 
 	private int? saveToServerResponse;
 
-	private OnReadyDelegate attemptConnectionCallback;
-
-	private int? attemptConnectionResponse;
-
 	private bool checkedVersion;
 
 	private Session session;
@@ -78,7 +74,7 @@ public class SessionManager : Singleton<SessionManager>
 	{
 		get
 		{
-			return session != null && session.TheGame != null && session.TheGame.MyMessages != null && session.TheGame.MyMessages.Count > 0;
+			return false;
 		}
 	}
 
@@ -319,39 +315,11 @@ public class SessionManager : Singleton<SessionManager>
 
 	public void AttemptConnection(OnReadyDelegate callback)
 	{
-		if (session != null && session.TheGame != null && callback != null)
+		if (session == null || session.TheGame == null || callback == null)
 		{
-			attemptConnectionCallback = callback;
-			AttemptConnection();
+			return;
 		}
-	}
-
-	private void AttemptConnection()
-	{
-		if (Application.internetReachability != 0)
-		{
-			session.WebFileServer.GetServerVersion(RecordConnectionResponse);
-		}
-	}
-
-	public void RecordConnectionResponse(TFWebFileResponse response)
-	{
-		attemptConnectionResponse = (int)response.StatusCode;
-	}
-
-	public void HandleConnectionResponse()
-	{
-		int? num = attemptConnectionResponse;
-		int num2 = (num.HasValue ? num.Value : 0);
-		attemptConnectionResponse = null;
-		if (num2 != 200)
-		{
-			string text = string.Format("HTTP Status {0}: There was a problem accessing the server.", num2);
-		}
-		else
-		{
-			attemptConnectionCallback();
-		}
+		callback();
 	}
 
 	public void LoadFromServer()
@@ -400,10 +368,7 @@ public class SessionManager : Singleton<SessionManager>
 		if (State == States.READY)
 		{
 			State = States.QUERYING;
-			if (session != null && session.TheGame != null)
-			{
-				session.GetUserInfo();
-			}
+			CompleteImmediateRequest();
 		}
 	}
 
@@ -426,11 +391,7 @@ public class SessionManager : Singleton<SessionManager>
 
 	public string GetMyUserInfoJson()
 	{
-		if (session != null && session.TheGame != null)
-		{
-			return session.TheGame.MyUserInfo;
-		}
-		return null;
+		return "{}";
 	}
 
 	public void RequestSendMessage(string to_id, string subject, string message)
@@ -438,10 +399,8 @@ public class SessionManager : Singleton<SessionManager>
 		if (State == States.READY)
 		{
 			State = States.SENDING;
-			if (session != null && session.TheGame != null)
-			{
-				session.SendMessage(to_id, subject, message);
-			}
+			Debug.Log("[OFFLINE_BACKEND] RequestSendMessage ignored.");
+			CompleteImmediateRequest();
 		}
 	}
 
@@ -450,10 +409,8 @@ public class SessionManager : Singleton<SessionManager>
 		if (State == States.READY)
 		{
 			State = States.DELETING;
-			if (session != null && session.TheGame != null)
-			{
-				session.DeleteMessage(msg_id);
-			}
+			Debug.Log("[OFFLINE_BACKEND] RequestDeleteMessage ignored.");
+			CompleteImmediateRequest();
 		}
 	}
 
@@ -462,10 +419,7 @@ public class SessionManager : Singleton<SessionManager>
 		if (State == States.READY)
 		{
 			State = States.QUERYING;
-			if (session != null && session.TheGame != null)
-			{
-				session.GetMessagesList();
-			}
+			CompleteImmediateRequest();
 		}
 	}
 
@@ -474,10 +428,17 @@ public class SessionManager : Singleton<SessionManager>
 		if (State == States.READY)
 		{
 			State = States.QUERYING;
-			if (session != null && session.TheGame != null)
-			{
-				session.GetMessage(id);
-			}
+			Debug.Log("[OFFLINE_BACKEND] RequestMyMessage ignored for id=" + id);
+			CompleteImmediateRequest();
+		}
+	}
+
+	private void CompleteImmediateRequest()
+	{
+		State = States.READY;
+		if (myOnReadyCallback != null)
+		{
+			myOnReadyCallback();
 		}
 	}
 
@@ -639,10 +600,6 @@ public class SessionManager : Singleton<SessionManager>
 		{
 			HandleSaveResponse();
 		}
-		if (attemptConnectionResponse.HasValue)
-		{
-			HandleConnectionResponse();
-		}
 		if (session != null && session.TheGame != null)
 		{
 			if (session.TheGame.needsSaveSuccessfulDialog)
@@ -681,14 +638,10 @@ public class SessionManager : Singleton<SessionManager>
 
 	private void onExternalMessage(string msg)
 	{
-		session.onExternalMessage(msg);
+		Debug.Log("[OFFLINE_BACKEND] SessionManager external message ignored: " + msg);
 	}
 
 	public void ClearMessages()
 	{
-		if (session != null && session.TheGame != null && session.TheGame.MyMessages != null)
-		{
-			session.TheGame.MyMessages.Clear();
-		}
 	}
 }

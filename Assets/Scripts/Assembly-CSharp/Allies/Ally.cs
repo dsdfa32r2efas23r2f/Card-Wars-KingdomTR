@@ -94,7 +94,7 @@ namespace Allies
 			{
 				if (status == HttpStatusCode.OK && data != null && data["success"].ToString() == "True")
 				{
-					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, (string)data["data"]), ResponseFlag.Success);
+					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, ExtractDataJson(data)), ResponseFlag.Success);
 				}
 				else
 				{
@@ -111,7 +111,7 @@ namespace Allies
 			{
 				if (status == HttpStatusCode.OK && data != null && data["success"].ToString() == "True")
 				{
-					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, (string)data["data"]), ResponseFlag.Success);
+					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, ExtractDataJson(data)), ResponseFlag.Success);
 				}
 				else
 				{
@@ -309,7 +309,7 @@ namespace Allies
 				}
 				else if (status == HttpStatusCode.OK && data["success"].ToString() == "True")
 				{
-					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, (string)data["data"]), ResponseFlag.Success);
+					callback(DecodeAllyInfo(null, AllyStatus.STATUS_NONE, ExtractDataJson(data)), ResponseFlag.Success);
 				}
 				else if (status == HttpStatusCode.NotFound)
 				{
@@ -493,6 +493,21 @@ namespace Allies
 				return list;
 			}
 			return list;
+		}
+
+		private static string ExtractDataJson(Dictionary<string, object> data)
+		{
+			if (data == null || !data.ContainsKey("data") || data["data"] == null)
+			{
+				return "[]";
+			}
+			object obj = data["data"];
+			string text = obj as string;
+			if (!string.IsNullOrEmpty(text))
+			{
+				return text;
+			}
+			return MiniJSON.Json.Serialize(obj);
 		}
 
 		private static AllyData DecodeOneAllyInfoOld(string user_id, AllyStatus friendstatus, string json_data)

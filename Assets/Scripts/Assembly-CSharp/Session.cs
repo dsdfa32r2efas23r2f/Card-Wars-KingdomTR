@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using Allies;
-using Messages;
 using MiniJSON;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -124,17 +123,7 @@ public class Session
 
 	private const string DELETE_GAME = "deleteGame";
 
-	private const string GET_USERINFO = "getUserInfo";
-
 	private const string GET_SERVERVERSION = "getServerVersion";
-
-	private const string GET_MESSAGES_LIST = "getMessagesList";
-
-	private const string GET_MESSAGE = "getMessage";
-
-	private const string SEND_MESSAGE = "sendMessage";
-
-	private const string DELETE_MESSAGE = "deleteMessage";
 
 	private const string TEST_CONNECTIVITY = "testConnectivity";
 
@@ -151,8 +140,6 @@ public class Session
 	private const string REQUEST_FRIEND = "requestFriend";
 
 	private const string REMOVE_FRIEND = "removeFriend";
-
-	private const string USER_LOGIN = "userLogin";
 
 	private SessionManager.AssignFacebookIDToUserCallback assignFacebookIDToUserCallback;
 
@@ -172,13 +159,7 @@ public class Session
 
 	private int currentVersion;
 
-	private bool messageListLoaded;
-
 	private List<string> queuedResponses = new List<string>();
-
-	private bool needsReload;
-
-	private Dictionary<string, TFServer.JsonResponseHandler> externalRequests = new Dictionary<string, TFServer.JsonResponseHandler>();
 
 	private Dictionary<string, object> asyncRequests = new Dictionary<string, object>();
 
@@ -205,14 +186,6 @@ public class Session
 		get
 		{
 			return webFileServer;
-		}
-	}
-
-	public string Username
-	{
-		set
-		{
-			webFileServer.Username = value;
 		}
 	}
 
@@ -295,7 +268,7 @@ public class Session
 		}
 		switch (key)
 		{
-		case "loadGame":
+		case LOAD_GAME:
 			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
 			{
 				Debug.Log("Server returned success (gamedata). Loading from network response");
@@ -375,7 +348,7 @@ public class Session
 				Debug.Log(string.Concat("What is going on? This is not an expected outcome: response status ", tFWebFileResponse.StatusCode, " Network down: ", tFWebFileResponse.NetworkDown));
 			}
 			break;
-		case "deleteGame":
+		case DELETE_GAME:
 			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
 			{
 				Debug.Log("Server returned success (delete game).");
@@ -385,24 +358,8 @@ public class Session
 				Debug.Log(string.Concat("Server returned status ", tFWebFileResponse.StatusCode, ". Nothing we can do...."));
 			}
 			break;
-		case "getMessagesList":
-			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
-			{
-				Debug.Log("Server returned success (my messages). Loading from network response");
-				if (game != null)
-				{
-					game.MyMessagesList = ProcessMessageListData(tFWebFileResponse.Data);
-				}
-				Message.ClearMessage();
-			}
-			else
-			{
-				messageListLoaded = true;
-				Message.GotallMessagesCallback(null, tFWebFileResponse);
-			}
-			break;
-		case "getServerVersion":
-		case "testConnectivity":
+		case GET_SERVERVERSION:
+		case TEST_CONNECTIVITY:
 			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
 			{
 				if (game != null)
@@ -415,61 +372,36 @@ public class Session
 				game.MyServerVersion = new Version(0, 0);
 			}
 			break;
-		case "getUserInfo":
-		case "getMessage":
-		case "getFriendsList":
-		case "getExplorersList":
-		case "getFriendRequests":
-		case "confirmFriendRequest":
-		case "denyFriendRequest":
-		case "requestFriend":
-		case "removeFriend":
+		case GET_FRIENDS_LIST:
+		case GET_EXPLORERS_LIST:
+		case GET_FRIEND_REQUESTS:
+		case CONFIRM_FRIEND_REQUEST:
+		case DENY_FRIEND_REQUEST:
+		case REQUEST_FRIEND:
+		case REMOVE_FRIEND:
 			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
 			{
 				Debug.Log("Server returned success (" + key + "). Loading from network response");
-				if (game != null)
-				{
-					Debug.Log("Return = " + tFWebFileResponse.Data);
-					switch (key)
-					{
-					case "getUserInfo":
-						game.MyUserInfo = tFWebFileResponse.Data;
-						break;
-					case "getMessage":
-						game.MyMessages.Add(tFWebFileResponse.Data);
-						ProcessedMessageData();
-						break;
-					case "getFriendsList":
-						game.MyFriendsList = tFWebFileResponse.Data;
-						break;
-					case "getExplorersList":
-						game.MyExplorersList = tFWebFileResponse.Data;
-						break;
-					case "getFriendRequests":
-						game.MyFriendRequests = tFWebFileResponse.Data;
-						break;
-					}
-				}
+				Debug.Log("Return = " + tFWebFileResponse.Data);
 			}
 			else
 			{
 				Debug.Log(string.Concat("Server returned status ", tFWebFileResponse.StatusCode, ". Nothing we can do...."));
-				game.MyUserInfo = "{\"error\":\"no data\"}";
 			}
 			switch (key)
 			{
-			case "getFriendsList":
+			case GET_FRIENDS_LIST:
 				game.MyFriendsList = tFWebFileResponse.Data;
 				Ally.AlliesListCallback(ThePlayer.playerId, tFWebFileResponse);
 				break;
-			case "denyFriendRequest":
+			case DENY_FRIEND_REQUEST:
 				Ally.DenyAllyRequestCallback(tFWebFileResponse);
 				break;
-			case "getFriendRequests":
+			case GET_FRIEND_REQUESTS:
 				game.MyFriendRequests = tFWebFileResponse.Data;
 				Ally.AllyRequestListCallback(ThePlayer.playerId, tFWebFileResponse);
 				break;
-			case "removeFriend":
+			case REMOVE_FRIEND:
 				Ally.RemoveAllyCallback(tFWebFileResponse);
 				break;
 			}
@@ -486,114 +418,68 @@ public class Session
 
 	public void ReloadGame()
 	{
-		needsReload = false;
 		SceneManager.LoadScene("AppReloadScene");
 	}
 
 	public void LoadGameFromNetwork()
 	{
-		game.LoadFromNetwork("loadGame", this);
+		game.LoadFromNetwork(LOAD_GAME, this);
 	}
 
 	public void DeleteGameFromNetwork()
 	{
-		game.DeleteFromNetwork("deleteGame", this);
-	}
-
-	public void SendMessage(string to_id, string subject, string message)
-	{
-		game.SendMessage("sendMessage", to_id, subject, message, this);
-	}
-
-	public void DeleteMessage(string msg_id)
-	{
-		game.DeleteMessage("deleteMessage", msg_id, this);
-	}
-
-	public void GetMessagesList()
-	{
-		game.GetMessagesList("getMessagesList", this);
-	}
-
-	public void GetMessage(string id)
-	{
-		game.GetMessage("getMessage", id, this);
-	}
-
-	public void GetUserInfo()
-	{
-		game.GetUserInfo("getUserInfo", this);
+		game.DeleteFromNetwork(DELETE_GAME, this);
 	}
 
 	public void GetServerVersion()
 	{
-		game.GetServerVersion("getServerVersion", this);
+		game.GetServerVersion(GET_SERVERVERSION, this);
 	}
 
 	public void TestConnectivity()
 	{
-		game.GetServerVersion("testConnectivity", this);
+		game.GetServerVersion(TEST_CONNECTIVITY, this);
 	}
 
 	public void GetFriendsList()
 	{
-		game.GetFriendsList("getFriendsList", this);
+		game.GetFriendsList(GET_FRIENDS_LIST, this);
 	}
 
 	public void GetExplorersList()
 	{
-		game.GetExplorersList("getExplorersList", this);
+		game.GetExplorersList(GET_EXPLORERS_LIST, this);
 	}
 
 	public void GetFriendRequests()
 	{
-		game.GetFriendRequests("getFriendRequests", this);
+		game.GetFriendRequests(GET_FRIEND_REQUESTS, this);
 	}
 
 	public void ConfirmFriendRequest(string id)
 	{
-		game.ConfirmFriendRequest("confirmFriendRequest", id, this);
+		game.ConfirmFriendRequest(CONFIRM_FRIEND_REQUEST, id, this);
 	}
 
 	public void DenyFriendRequest(string id)
 	{
-		game.DenyFriendRequest("denyFriendRequest", id, this);
+		game.DenyFriendRequest(DENY_FRIEND_REQUEST, id, this);
 	}
 
 	public void RequestFriend(string id)
 	{
-		game.RequestFriend("requestFriend", id, this);
+		game.RequestFriend(REQUEST_FRIEND, id, this);
 	}
 
 	public void RemoveFriend(string id)
 	{
-		game.RemoveFriend("removeFriend", id, this);
+		game.RemoveFriend(REMOVE_FRIEND, id, this);
 	}
 
-    public void GetServerTime()
-    {
-        TFServer.JsonResponseHandler handler = delegate(Dictionary<string, object> data, HttpStatusCode status)
-        {
-            if (status == HttpStatusCode.OK)
-            {
-                Dictionary<string, object> dictionary = (Dictionary<string, object>)data["data"];
-                try
-                {
-                    DateTime serverTime = DateTime.ParseExact(dictionary["server_time"].ToString(), "ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                    TFUtils.UpdateServerTime(serverTime);
-                }
-                catch (FormatException e)
-                {
-                    Debug.LogError("Failed to parse date string: " + dictionary["server_time"].ToString() + " Error: " + e.Message);
-                }
-            }
-            else
-            {
-                Debug.LogError("Failed to get server time. Status: " + status);
-            }
-        };
-        Server.GetTime(handler);
-    }
+	public void GetServerTime()
+	{
+		TFUtils.UpdateServerTime(DateTime.UtcNow);
+	}
 
 	public bool IsLoggedIn()
 	{
@@ -602,7 +488,7 @@ public class Session
 
 	public bool IsMessagelistLoaded()
 	{
-		return messageListLoaded;
+		return true;
 	}
 
 	public int GetLocalVersion()
@@ -617,65 +503,12 @@ public class Session
 
 	public void onExternalMessage(string msg)
 	{
-		Debug.Log("decoding message: " + msg);
-		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(msg);
-		string text = dictionary["requestId"] as string;
-		if (externalRequests.ContainsKey(text))
-		{
-			TFServer.JsonResponseHandler jsonResponseHandler = externalRequests[text];
-			externalRequests.Remove(text);
-			if (dictionary["data"] is Dictionary<string, object>)
-			{
-				jsonResponseHandler(dictionary["data"] as Dictionary<string, object>, HttpStatusCode.OK);
-			}
-			else
-			{
-				Debug.LogError("Callback result is not a Dictionary<string, object>");
-			}
-		}
-		else
-		{
-			Debug.Log("No handler found for id: " + text);
-		}
+		Debug.Log("[OFFLINE_BACKEND] Ignoring external message: " + msg);
 	}
 
 	public void registerExternalCallback(string requestId, TFServer.JsonResponseHandler callback)
 	{
-		externalRequests[requestId] = callback;
-	}
-
-
-	private List<string> ProcessMessageListData(string data)
-	{
-		List<object> list = (List<object>)Json.Deserialize(data);
-		List<string> list2 = new List<string>();
-		foreach (object item in list)
-		{
-			list2.Add((string)item);
-		}
-		GetNextMessage(list2);
-		return list2;
-	}
-
-	private void ProcessedMessageData()
-	{
-		game.MyMessagesList.RemoveAt(0);
-		GetNextMessage(game.MyMessagesList);
-	}
-
-	private void GetNextMessage(List<string> list)
-	{
-		if (list == null || list.Count == 0)
-		{
-			messageListLoaded = true;
-			TFWebFileResponse tFWebFileResponse = new TFWebFileResponse();
-			tFWebFileResponse.StatusCode = HttpStatusCode.OK;
-			Message.GotallMessagesCallback(game.MyMessages, tFWebFileResponse);
-		}
-		else
-		{
-			GetMessage(list[0]);
-		}
+		Debug.Log("[OFFLINE_BACKEND] registerExternalCallback ignored for requestId=" + requestId);
 	}
 
 	private Version ProcessVersionData(string response)
@@ -835,24 +668,7 @@ public class Session
 
 	public void ValidateLastPatch()
 	{
-		lock (_validationLock)
-		{
-			if (_validationThread != null)
-			{
-				return;
-			}
-			SQContentPatcher patcher = new SQContentPatcher();
-			Session me = this;
-			_validationThread = new Thread((ThreadStart)delegate
-			{
-				patcher.ValidateAndFixDownloadedManifests();
-				lock (me._validationLock)
-				{
-					me._validationThread = null;
-				}
-			});
-			_validationThread.Start();
-		}
+		_validationThread = null;
 	}
 
 	public bool UpdatePatching()
@@ -879,10 +695,6 @@ public class Session
 			break;
 		case "patchingDone":
 			_finishedPatching = true;
-			if (contentPatcher != null && contentPatcher.ContentChanged && SessionManager.Instance.IsLoadDataDone())
-			{
-				needsReload = true;
-			}
 			contentPatcher = null;
 			break;
 		case "patchingNotNecessary":
@@ -893,8 +705,7 @@ public class Session
 
 	public void StartPatch()
 	{
-		Debug.Log("Starting to Patch content");
-		_finishedPatching = false;
-		UpdatePatching();
+		_finishedPatching = true;
+		contentPatcher = null;
 	}
 }

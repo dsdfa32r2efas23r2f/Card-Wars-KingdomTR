@@ -9,8 +9,6 @@ public class SQSettings
 {
 	private static string serverUrl;
 
-	private static string localServerUrl;
-
 	private static string photonChatAppID;
 
 	private static string photonPUNAppID;
@@ -23,6 +21,7 @@ public class SQSettings
 
 	private static string bundleVersion;
 
+	// Backward compatibility: legacy bootstrap still writes this flag.
 	public static bool useLocalServer;
 
 	public static string CDN_URL
@@ -132,13 +131,7 @@ public class SQSettings
 		string streamingAssetsFile = TFUtils.GetStreamingAssetsFile("server_settings.json");
 		empty = ((!streamingAssetsFile.Contains("://")) ? File.ReadAllText(streamingAssetsFile) : getJsonPath(streamingAssetsFile));
 		Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(empty);
-		if (useLocalServer)
-		{
-			serverUrl = (string)dictionary["local_server_url"];
-		}
-		else{
-			serverUrl = (string)dictionary["server_url"];
-		}
+		serverUrl = (string)dictionary["server_url"];
 		photonChatAppID = (string)dictionary["photon_chat_app_id"];
 		photonPUNAppID = (string)dictionary["photon_pun_app_id"];
 		streamingAssetsFile = TFUtils.GetStreamingAssetsFile("global_settings.json");

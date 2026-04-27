@@ -1354,14 +1354,9 @@ public class PlayerSaveData
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 			{
 				Singleton<PlayerInfoScript>.Instance.UpdateBadgeCount(BadgeEnum.Gacha);
-				if (data.ContainsKey("data"))
+				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
+				if (dictionary2 != null)
 				{
-					string text = (string)data["data"];
-					string json = text.Replace("[", string.Empty).Replace("]", string.Empty);
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(json);
-					if (dictionary.Count > 0 && dictionary.ContainsKey("fields"))
-					{
-						Dictionary<string, object> dictionary2 = (Dictionary<string, object>)dictionary["fields"];
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num2 = Convert.ToInt32(dictionary2["level1"]);
@@ -1377,7 +1372,6 @@ public class PlayerSaveData
 							int num4 = Convert.ToInt32(dictionary2["level3"]);
 							CustomizationCurrency = num4;
 						}
-					}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1400,14 +1394,9 @@ public class PlayerSaveData
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 			{
 				Singleton<PlayerInfoScript>.Instance.UpdateBadgeCount(BadgeEnum.Gacha);
-				if (data.ContainsKey("data"))
+				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
+				if (dictionary2 != null)
 				{
-					string text = (string)data["data"];
-					string json = text.Replace("[", string.Empty).Replace("]", string.Empty);
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(json);
-					if (dictionary.Count > 0 && dictionary.ContainsKey("fields"))
-					{
-						Dictionary<string, object> dictionary2 = (Dictionary<string, object>)dictionary["fields"];
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num3 = Convert.ToInt32(dictionary2["level1"]);
@@ -1423,7 +1412,6 @@ public class PlayerSaveData
 							int num5 = Convert.ToInt32(dictionary2["level3"]);
 							CustomizationCurrency = num5;
 						}
-					}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1467,14 +1455,9 @@ public class PlayerSaveData
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 			{
 				Singleton<PlayerInfoScript>.Instance.UpdateBadgeCount(BadgeEnum.Gacha);
-				if (data.ContainsKey("data"))
+				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
+				if (dictionary2 != null)
 				{
-					string text = (string)data["data"];
-					string json = text.Replace("[", string.Empty).Replace("]", string.Empty);
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(json);
-					if (dictionary.Count > 0 && dictionary.ContainsKey("fields"))
-					{
-						Dictionary<string, object> dictionary2 = (Dictionary<string, object>)dictionary["fields"];
 						string key = "5424493204pemhi3148ifmanseu4iksdf4_4" + SessionManager.Instance.PlayerID + "0";
 						string hashSTRING2 = GetHashSTRING(SessionManager.Instance.PlayerID, key);
 						string text2 = Convert.ToString(dictionary2["handle"]);
@@ -1500,7 +1483,6 @@ public class PlayerSaveData
 								CustomizationCurrency = num3;
 							}
 						}
-					}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1524,14 +1506,9 @@ public class PlayerSaveData
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 			{
-				if (data.ContainsKey("data"))
+				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
+				if (dictionary2 != null)
 				{
-					string text = (string)data["data"];
-					string json = text.Replace("[", string.Empty).Replace("]", string.Empty);
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(json);
-					if (dictionary.Count > 0 && dictionary.ContainsKey("fields"))
-					{
-						Dictionary<string, object> dictionary2 = (Dictionary<string, object>)dictionary["fields"];
 						string key = "5424493204pemhi3148ifmanseu4iksdf4_4" + SessionManager.Instance.PlayerID + Convert.ToString(misc);
 						string hashSTRING2 = GetHashSTRING(SessionManager.Instance.PlayerID, key);
 						string text2 = Convert.ToString(dictionary2["handle"]);
@@ -1557,7 +1534,6 @@ public class PlayerSaveData
 								CustomizationCurrency = num3;
 							}
 						}
-					}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1580,14 +1556,9 @@ public class PlayerSaveData
 			ActionResult actionResult = new ActionResult();
 			if (status == HttpStatusCode.OK && data != null && data.ContainsKey("success") && (bool)data["success"])
 			{
-				if (data.ContainsKey("data"))
+				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
+				if (dictionary2 != null)
 				{
-					string text = (string)data["data"];
-					string json = text.Replace("[", string.Empty).Replace("]", string.Empty);
-					Dictionary<string, object> dictionary = (Dictionary<string, object>)Json.Deserialize(json);
-					if (dictionary.Count > 0 && dictionary.ContainsKey("fields"))
-					{
-						Dictionary<string, object> dictionary2 = (Dictionary<string, object>)dictionary["fields"];
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num = Convert.ToInt32(dictionary2["level1"]);
@@ -1598,7 +1569,6 @@ public class PlayerSaveData
 							int num2 = Convert.ToInt32(dictionary2["level2"]);
 							_FreeHardCurrency = num2;
 						}
-					}
 				}
 				actionResult.success = true;
 				if (callback != null)
@@ -1616,5 +1586,63 @@ public class PlayerSaveData
 			}
 		};
 		theSession.Server.User_action(0, 0, 0, paid, free, 100, hashSTRING, -1, flag, "debugmenu", Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+	}
+
+	private static Dictionary<string, object> ExtractUserActionFields(Dictionary<string, object> data)
+	{
+		if (data == null || !data.ContainsKey("data"))
+		{
+			return null;
+		}
+		object obj = data["data"];
+		if (obj is Dictionary<string, object>)
+		{
+			Dictionary<string, object> dictionary = (Dictionary<string, object>)obj;
+			if (dictionary.ContainsKey("fields") && dictionary["fields"] is Dictionary<string, object>)
+			{
+				return (Dictionary<string, object>)dictionary["fields"];
+			}
+			return null;
+		}
+		if (obj is List<object>)
+		{
+			List<object> list = (List<object>)obj;
+			if (list.Count > 0 && list[0] is Dictionary<string, object>)
+			{
+				Dictionary<string, object> dictionary2 = (Dictionary<string, object>)list[0];
+				if (dictionary2.ContainsKey("fields") && dictionary2["fields"] is Dictionary<string, object>)
+				{
+					return (Dictionary<string, object>)dictionary2["fields"];
+				}
+			}
+			return null;
+		}
+		string text = obj as string;
+		if (string.IsNullOrEmpty(text))
+		{
+			return null;
+		}
+		object obj2 = Json.Deserialize(text);
+		if (obj2 is Dictionary<string, object>)
+		{
+			Dictionary<string, object> dictionary3 = (Dictionary<string, object>)obj2;
+			if (dictionary3.ContainsKey("fields") && dictionary3["fields"] is Dictionary<string, object>)
+			{
+				return (Dictionary<string, object>)dictionary3["fields"];
+			}
+		}
+		else if (obj2 is List<object>)
+		{
+			List<object> list2 = (List<object>)obj2;
+			if (list2.Count > 0 && list2[0] is Dictionary<string, object>)
+			{
+				Dictionary<string, object> dictionary4 = (Dictionary<string, object>)list2[0];
+				if (dictionary4.ContainsKey("fields") && dictionary4["fields"] is Dictionary<string, object>)
+				{
+					return (Dictionary<string, object>)dictionary4["fields"];
+				}
+			}
+		}
+		return null;
 	}
 }
