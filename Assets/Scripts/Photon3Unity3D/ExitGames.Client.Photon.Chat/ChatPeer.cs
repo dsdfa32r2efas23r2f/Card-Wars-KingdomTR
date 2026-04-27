@@ -52,7 +52,15 @@ namespace ExitGames.Client.Photon.Chat
 			if (protocol == ConnectionProtocol.WebSocket || protocol == ConnectionProtocol.WebSocketSecure)
 			{
 				UnityEngine.Debug.Log("Using SocketWebTcp");
-				base.SocketImplementation = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, Assembly-CSharp");
+				base.SocketImplementation = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, _Project.Network.Photon");
+				if (base.SocketImplementation == null)
+				{
+					base.SocketImplementation = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, Assembly-CSharp");
+				}
+				if (base.SocketImplementation == null)
+				{
+					base.SocketImplementation = Type.GetType("ExitGames.Client.Photon.SocketWebTcp");
+				}
 			}
 		}
 

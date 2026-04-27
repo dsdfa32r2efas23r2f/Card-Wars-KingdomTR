@@ -37,6 +37,14 @@ public class MissionManager : DetachedSingleton<MissionManager>
 
 	public bool ShouldCheckCompletion { get; set; }
 
+	public void EnsureInitialized()
+	{
+		if (GlobalProgress == null || DailyProgress == null || BattleProgress == null)
+		{
+			Init();
+		}
+	}
+
 	public void Init()
 	{
 		GlobalProgress = new MissionProgress();

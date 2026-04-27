@@ -280,7 +280,9 @@ public class PlayerSaveData
 			int num = value - (int)_SoftCurrency;
 			if (num < 0)
 			{
-				DetachedSingleton<MissionManager>.Instance.OnCoinsSpent(num);
+				MissionManager instance = DetachedSingleton<MissionManager>.Instance;
+				instance.EnsureInitialized();
+				instance.OnCoinsSpent(num);
 			}
 			_SoftCurrency = value;
 		}
@@ -391,7 +393,9 @@ public class PlayerSaveData
 			int num = value - (int)_PvPCurrency;
 			if (num < 0)
 			{
-				DetachedSingleton<MissionManager>.Instance.OnTeethSpent(num);
+				MissionManager instance = DetachedSingleton<MissionManager>.Instance;
+				instance.EnsureInitialized();
+				instance.OnTeethSpent(num);
 			}
 			_PvPCurrency = value;
 			Singleton<PlayerInfoScript>.Instance.UpdateBadgeCount(BadgeEnum.Gacha);
