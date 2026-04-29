@@ -267,12 +267,17 @@ public class Session
 		switch (key)
 		{
 		case LOAD_GAME:
+			Debug.Log("[PROFILE_STORAGE] LOAD_GAME response status=" + tFWebFileResponse.StatusCode);
 			if (tFWebFileResponse.StatusCode == HttpStatusCode.OK)
 			{
 				Debug.Log("Server returned success (gamedata). Loading from network response");
 				Dictionary<string, object> asJSONDict = tFWebFileResponse.GetAsJSONDict();
 				if (asJSONDict != null && asJSONDict.ContainsKey("PlayerName"))
 				{
+					object paidObj = null, freeObj = null;
+					asJSONDict.TryGetValue("PaidHardCurrency", out paidObj);
+					asJSONDict.TryGetValue("FreeHardCurrency", out freeObj);
+					Debug.Log(string.Format("[PROFILE_STORAGE] LOAD_GAME overwriting local cache with server data: paid={0} free={1}", paidObj, freeObj));
 					try
 					{
 						string text = tFWebFileResponse.Data.ToString();

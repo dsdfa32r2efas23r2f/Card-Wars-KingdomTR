@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Project.Core.Application.Meta.Ports;
 using UnityEngine;
 
 public class StoreScreenController : Singleton<StoreScreenController>
@@ -222,7 +223,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 		OpenToHeroes = true;
 		// TODO(offline-store): keep hard currency tab visible in local/offline build.
 		HardCurrencyTabButton.gameObject.SetActive(true);
-		mDisplayedHardCurrency = Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency;
+		mDisplayedHardCurrency = (MetaBootstrap.StateReader ?? (IMetaStateReader)new LegacyMetaStateReader()).HardCurrency;
 		mHardCurrencyTickRate = 9999f;
 		StaminaRefillCost.text = MiscParams.StaminaRefillCost.ToString();
 		InventoryIncreaseCost.text = MiscParams.InventorySpacePurchaseCost.ToString();
@@ -645,7 +646,9 @@ public class StoreScreenController : Singleton<StoreScreenController>
 	{
 		if (HardCurrencyAvailable.gameObject.activeInHierarchy)
 		{
-			int hardCurrency = Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency;
+			IMetaStateReader reader = MetaBootstrap.StateReader
+				?? (IMetaStateReader)new LegacyMetaStateReader();
+			int hardCurrency = reader.HardCurrency;
 			if ((float)hardCurrency > mDisplayedHardCurrency)
 			{
 				mDisplayedHardCurrency = mDisplayedHardCurrency.TickTowards(hardCurrency, mHardCurrencyTickRate);
@@ -655,7 +658,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 				mDisplayedHardCurrency = hardCurrency;
 			}
 			HardCurrencyAvailable.text = ((int)(mDisplayedHardCurrency + 0.001f)).ToString();
-			CustomizationCurrencyAvailable.text = Singleton<PlayerInfoScript>.Instance.SaveData.SoftCurrency.ToString();
+			CustomizationCurrencyAvailable.text = reader.SoftCurrency.ToString();
 		}
 	}
 
@@ -666,7 +669,8 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void StartHardCurrencyTick()
 	{
-		float num = (float)Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency - mDisplayedHardCurrency;
+		IMetaStateReader reader = MetaBootstrap.StateReader ?? (IMetaStateReader)new LegacyMetaStateReader();
+		float num = (float)reader.HardCurrency - mDisplayedHardCurrency;
 		if (num > 0f)
 		{
 			HardCurrencyGainTween.Play();
@@ -676,12 +680,12 @@ public class StoreScreenController : Singleton<StoreScreenController>
 			}
 			else
 			{
-				mDisplayedHardCurrency = Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency;
+				mDisplayedHardCurrency = reader.HardCurrency;
 			}
 		}
 		else
 		{
-			mDisplayedHardCurrency = Singleton<PlayerInfoScript>.Instance.SaveData.HardCurrency;
+			mDisplayedHardCurrency = reader.HardCurrency;
 		}
 	}
 
@@ -763,17 +767,13 @@ public class StoreScreenController : Singleton<StoreScreenController>
 		if (data != null)
 		{
 			Debug.Log(string.Format("StoreScreenController::ExecGrantProduct grant id={0}, paid={1}, free={2}, social={3}, soft={4}", productId, data.PaidHardCurrency, data.FreeHardCurrency, data.SocialCurrency, data.SoftCurrency));
-			PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
-			if (mProductIdBeingPurchased != null)
+			MetaRefactorFacade metaFacade = MetaBootstrap.Facade;
+			if (metaFacade == null)
 			{
-				Singleton<PlayerInfoScript>.Instance.AddHardCurrency2(data.PaidHardCurrency, data.FreeHardCurrency, productId, Singleton<PurchaseManager>.Instance.getLastHandle, mProductIdBeingPurchased.Price);
+				Debug.LogError("[META_ECS] MetaBootstrap.Facade is null. Add MetaBootstrap to FrontEndScene.");
+				return;
 			}
-			else
-			{
-				Singleton<PlayerInfoScript>.Instance.AddHardCurrency2(data.PaidHardCurrency, data.FreeHardCurrency, productId, Singleton<PurchaseManager>.Instance.getLastHandle, string.Empty);
-			}
-			saveData.PvPCurrency += data.SocialCurrency;
-			saveData.SoftCurrency += data.SoftCurrency;
+			metaFacade.ApplyStoreGrant(data, productId, mProductIdBeingPurchased);
 			mProductIdBeingPurchased = null;
 			Singleton<BusyIconPanelController>.Instance.Hide();
 		}
@@ -849,6 +849,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void ConfirmRefillStamina()
 	{
+		MetaBootstrap.Facade?.ApplyStaminaRefill(MiscParams.StaminaRefillCost);
 		mWaitForUserAction = true;
 		mUserActionProceed = NextAction.WAITING;
 		Singleton<BusyIconPanelController>.Instance.Show();
@@ -895,6 +896,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void OnClickConfirmPurchaseSlots()
 	{
+		MetaBootstrap.Facade?.ApplyStoreSpend(MiscParams.InventorySpacePurchaseCost, "inventory_expand");
 		PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
 		mWaitForUserAction = true;
 		mUserActionProceed = NextAction.WAITING;
@@ -910,6 +912,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void ConfirmExpandInventory()
 	{
+		MetaBootstrap.Facade?.ApplyStoreSpend(MiscParams.InventorySpacePurchaseCost, "inventory_expand");
 		PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
 		mWaitForUserAction = true;
 		mUserActionProceed = NextAction.WAITING;
@@ -946,6 +949,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void ConfirmExpandAllyList()
 	{
+		MetaBootstrap.Facade?.ApplyStoreSpend(MiscParams.AllyBoxPurchaseCost, "ally_expand");
 		PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
 		mWaitForUserAction = true;
 		mUserActionProceed = NextAction.WAITING;
@@ -982,6 +986,7 @@ public class StoreScreenController : Singleton<StoreScreenController>
 
 	private void ConfirmBuySoftCurrency()
 	{
+		MetaBootstrap.Facade?.ApplyStoreSpend(MiscParams.BuySoftCurrencyCost, "buy_gold");
 		Singleton<PlayerInfoScript>.Instance.BuyGold(1);
 	}
 
@@ -1088,6 +1093,7 @@ private void PopulateLeader(LeaderData leader)
 
 	private void ConfirmHeroPurchase()
 	{
+		MetaBootstrap.Facade?.ApplyStoreSpend(mHighlightedLeader.BuyCost, "hero_purchase");
 		mWaitForUserAction = true;
 		mUserActionProceed = NextAction.WAITING;
 		Singleton<BusyIconPanelController>.Instance.Show();
@@ -1185,6 +1191,7 @@ private void PopulateLeader(LeaderData leader)
 			}
 			else
 			{
+				MetaBootstrap.Facade?.ApplyStoreSpend(MiscParams.StaminaRefillCost, "skin_purchase");
 				mWaitForUserAction = true;
 				mUserActionProceed = NextAction.WAITING;
 				Singleton<BusyIconPanelController>.Instance.Show();

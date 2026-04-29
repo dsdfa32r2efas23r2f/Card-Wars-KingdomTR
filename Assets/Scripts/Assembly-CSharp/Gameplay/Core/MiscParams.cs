@@ -140,8 +140,6 @@ public class MiscParams : DataManager<DummyData>
 
 	private bool _AndroidUsesDifferentFBAccount;
 
-	private int _PvPHackThreshold;
-
 	private float _PvPReconnectTimeoutHost;
 
 	private float _PvPReconnectTimeoutClient;
@@ -161,8 +159,6 @@ public class MiscParams : DataManager<DummyData>
 	private int _PvPPauseAllowMilliseconds;
 
 	private int _PvPAllyMatchWaitLimitMilliseconds;
-
-	private bool _HarderHashCheck;
 
 	private string _CompassSupportURL;
 
@@ -656,14 +652,6 @@ public class MiscParams : DataManager<DummyData>
 		}
 	}
 
-	public static bool HarderHashCheck
-	{
-		get
-		{
-			return Instance._HarderHashCheck;
-		}
-	}
-
 	public static bool UseGameServerStats
 	{
 		get
@@ -861,14 +849,6 @@ public class MiscParams : DataManager<DummyData>
 		get
 		{
 			return Instance._DisablePvp;
-		}
-	}
-
-	public static int PvPHackThreshold
-	{
-		get
-		{
-			return Instance._PvPHackThreshold;
 		}
 	}
 
@@ -1195,7 +1175,6 @@ public class MiscParams : DataManager<DummyData>
 		_MaxGachaXpLevel = TFUtils.LoadInt(dictionary, "MaxGachaXpLevel", 10);
 		_DisableChat = TFUtils.LoadBool(dictionary, "DisableChat", false);
 		_DisablePvp = TFUtils.LoadBool(dictionary, "DisablePvp", false);
-		_PvPHackThreshold = TFUtils.LoadInt(dictionary, "PvPHackThreshold", 9989);
 		_PvPReconnectTimeoutHost = TFUtils.LoadFloat(dictionary, "PvPReconnectTimeoutHost", 11f);
 		_PvPReconnectTimeoutClient = TFUtils.LoadFloat(dictionary, "PvPReconnectTimeoutClient", 4f);
 		_PvPMessageAckTimeout = TFUtils.LoadFloat(dictionary, "PvPMessageAckTimeout", 4f);
@@ -1206,7 +1185,6 @@ public class MiscParams : DataManager<DummyData>
 		_PvPLeaveDelay = TFUtils.LoadFloat(dictionary, "PvPLeaveDelay", 0.5f);
 		_PvPPauseAllowMilliseconds = TFUtils.LoadInt(dictionary, "PvPPauseAllowMilliseconds", 3500);
 		_PvPAllyMatchWaitLimitMilliseconds = TFUtils.LoadInt(dictionary, "PvPAllyMatchWaitLimitMilliseconds", 60000);
-		_HarderHashCheck = TFUtils.LoadBool(dictionary, "HarderHashCheck", false);
 		_UseGameServerStats = TFUtils.LoadBool(dictionary, "UseGameServerStats", false);
 		_AndroidUsesDifferentFBAccount = TFUtils.LoadBool(dictionary, "AndroidFBAccount", false);
 		_ThrottlePointsPerMessage = TFUtils.LoadFloat(dictionary, "ThrottlePPM", 0f);
