@@ -69,9 +69,6 @@ public class DWGame : Singleton<DWGame>
 
 	private bool DeployCreatureStart;
 
-	// TODO_REFAC: temporary bridge into new battle-core; remove once DWGame turn loop is fully migrated.
-	private BattleRefactorFacade mBattleRefactorFacade;
-
 	public bool LostDuringMyTurn { get; set; }
 
 	public bool SelectingLane { get; set; }
@@ -218,9 +215,6 @@ public class DWGame : Singleton<DWGame>
 		Singleton<BattleHudController>.Instance.PopulateHeros(Singleton<DWGame>.Instance.CurrentBoardState.GetPlayerState(0), Singleton<DWGame>.Instance.CurrentBoardState.GetPlayerState(1));
 		RewardManager.Init(currentActiveQuest, OpLoadout);
 		MasterBoardState.Setup();
-		// TODO_REFAC: run new battle-core facade in parallel (shadow mode) while legacy loop remains source of truth.
-		mBattleRefactorFacade = new BattleRefactorFacade(MiscParams.ActionPointIncrement);
-		mBattleRefactorFacade.Start(MiscParams.StartingActionPoints);
 		IsSetUp = true;
 	}
 
@@ -1488,21 +1482,7 @@ public class DWGame : Singleton<DWGame>
 		{
 			mMultiplayerTimeLeft = -1f;
 		}
-		if (mBattleRefactorFacade != null)
-		{
-			mBattleRefactorFacade.EndTurn();
-		}
 		SetGameState(GameState.P1EndTurn);
-	}
-
-	// TODO_REFAC: temporary API for gradual AP migration from legacy PlayerState to battle-core facade.
-	public bool TrySpendUserActionPointsRefactor(int amount)
-	{
-		if (mBattleRefactorFacade == null)
-		{
-			return false;
-		}
-		return mBattleRefactorFacade.TrySpendUserActionPoints(amount);
 	}
 
 	public void RevivePlayer()
