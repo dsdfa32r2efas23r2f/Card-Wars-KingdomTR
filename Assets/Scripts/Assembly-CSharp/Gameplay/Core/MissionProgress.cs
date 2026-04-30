@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Text;
 
 public class MissionProgress
@@ -210,21 +211,61 @@ public class MissionProgress
 
 	private int GetValue(Dictionary<string, object> dict, string key)
 	{
-		if (dict.ContainsKey(key))
+		if (!dict.ContainsKey(key) || dict[key] == null)
 		{
-			return (int)dict[key];
+			return 0;
+		}
+		object obj = dict[key];
+		if (obj is int)
+		{
+			return (int)obj;
+		}
+		if (obj is long)
+		{
+			return Convert.ToInt32((long)obj);
+		}
+		if (obj is double)
+		{
+			return Convert.ToInt32((double)obj);
+		}
+		if (obj is float)
+		{
+			return Convert.ToInt32((float)obj);
+		}
+		int result;
+		if (int.TryParse(Convert.ToString(obj), out result))
+		{
+			return result;
 		}
 		return 0;
 	}
 
 	private void DeserializeIntArray(Dictionary<string, object> dict, string key, ref int[] array)
 	{
-		if (dict.ContainsKey(key))
+		if (!dict.ContainsKey(key) || dict[key] == null)
 		{
-			int[] array2 = (int[])dict[key];
-			for (int i = 0; i < array2.Length; i++)
+			return;
+		}
+		object obj = dict[key];
+		if (obj is int[])
+		{
+			int[] array2 = (int[])obj;
+			for (int i = 0; i < array2.Length && i < array.Length; i++)
 			{
 				array[i] = array2[i];
+			}
+			return;
+		}
+		if (obj is object[])
+		{
+			object[] array3 = (object[])obj;
+			for (int j = 0; j < array3.Length && j < array.Length; j++)
+			{
+				object obj2 = array3[j];
+				if (obj2 != null)
+				{
+					array[j] = Convert.ToInt32(obj2);
+				}
 			}
 		}
 	}
@@ -272,3 +313,5 @@ public class MissionProgress
 		DeserializeIntArray(dict, "FactionFused", ref FactionFused);
 	}
 }
+
+

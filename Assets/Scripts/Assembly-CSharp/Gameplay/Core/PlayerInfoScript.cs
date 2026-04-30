@@ -323,6 +323,8 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			}
 			else
 			{
+				Debug.Log(string.Format("[PROFILE_STORAGE] Currency server call SUCCESS type={0} -> SaveLocal paid={1} free={2}",
+					whichType, SaveData?.PaidHardCurrency, SaveData?.FreeHardCurrency));
 				Singleton<StoreScreenController>.Instance.TriggerHardCurrencyGainTick();
 			}
 			SaveLocal();
@@ -558,8 +560,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		stringBuilder.Append(MakeJS("PlayerName", SaveData.PlayerName) + ",");
 		stringBuilder.Append(MakeJS("MultiplayerPlayerName", SaveData.MultiplayerPlayerName) + ",");
 		stringBuilder.Append(MakeJS("HasAuthenticated", SaveData.HasAuthenticated) + ",");
-		stringBuilder.Append(MakeJS("AddedStones", SaveData.Muryo.ToString("X")) + ",");
-		stringBuilder.Append(MakeJS("ReadWriteParam", SaveData.ReadWriteParam) + ",");
 		stringBuilder.Append(MakeJS("SelectedLoadout", SaveData.SelectedLoadout) + ",");
 		stringBuilder.Append(MakeJS("MyHelperCreatureID", SaveData.MyHelperCreatureID) + ",");
 		stringBuilder.Append(MakeJS("SoftCurrency", SaveData.SoftCurrency) + ",");
@@ -582,7 +582,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		stringBuilder.Append(MakeJS("LastAccessUTC", SaveData.LastAccessUTC) + ",");
 		stringBuilder.Append(MakeJS("InstalledDate", SaveData.InstalledDate) + ",");
 		stringBuilder.Append(MakeJS("RandomDungeonLevel", SaveData.RandomDungeonLevel) + ",");
-		stringBuilder.Append(MakeJS("SecurityKeyValue", SaveData.Harai.ToString("X")) + ",");
 		if (SaveData.LastKnownLocation != null)
 		{
 			stringBuilder.Append(MakeJS("LastKnownLocation", SaveData.LastKnownLocation) + ",");
@@ -621,7 +620,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		{
 			stringBuilder.Append(MakeJS("SelectedCardBack", SaveData.SelectedCardBack.ID) + ",");
 		}
-		stringBuilder.Append(MakeJS("TitleDisplayTime", SaveData.Yuryo) + ",");
 		if (SaveData.ActivePvpSeason != null)
 		{
 			stringBuilder.Append(MakeJS("ActivePvpSeason", SaveData.ActivePvpSeason.ID) + ",");
@@ -657,7 +655,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		stringBuilder.Append("\"Sales\":" + SerializeSales() + ",");
 		stringBuilder.Append("\"GachaCooldowns\":" + SerializeGachaCooldowns() + ",");
 		stringBuilder.Append("\"GachaKeys\":" + SerializeGachaKeys() + ",");
-		stringBuilder.Append(MakeJS("MapClickInterval", SaveData.Tada) + ",");
 		if (SaveData.ActiveCalendar != null)
 		{
 			stringBuilder.Append(MakeJS("ActiveCalendar", SaveData.ActiveCalendar.ID) + ",");
@@ -761,8 +758,11 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			SaveData.MyHelperCreatureID = TFUtils.LoadInt(dictionary, "MyHelperCreatureID", -1);
 			SaveData.SoftCurrency = TFUtils.LoadInt(dictionary, "SoftCurrency", 0);
 			SaveData.CustomizationCurrency = TFUtils.LoadInt(dictionary, "CustomizationCurrency", 0);
-			SaveData.ManualSetHardCurrency(TFUtils.LoadInt(dictionary, "PaidHardCurrency", 0), TFUtils.LoadInt(dictionary, "FreeHardCurrency", 0));
-			SaveData.ManualSetCurrencyHash(TFUtils.LoadInt(dictionary, "TitleDisplayTime", 41592), TFUtils.LoadInt(dictionary, "MapClickInterval", 65358));
+			int _dPaid = TFUtils.LoadInt(dictionary, "PaidHardCurrency", 0);
+		int _dFree = TFUtils.LoadInt(dictionary, "FreeHardCurrency", 0);
+		Debug.Log(string.Format("[PROFILE_STORAGE] Deserialize: json has paid={0} free={1} soft={2} pvp={3}",
+			_dPaid, _dFree, TFUtils.LoadInt(dictionary, "SoftCurrency", 0), TFUtils.LoadInt(dictionary, "PvpCurrency", 0)));
+		SaveData.ManualSetHardCurrency(_dPaid, _dFree);
 			SaveData.PvPCurrency = TFUtils.LoadInt(dictionary, "PvpCurrency", 0);
 			SaveData.RankXP = TFUtils.LoadInt(dictionary, "RankXP", 0);
 			SaveData.StaminaFullAtTime = TFUtils.LoadUint(dictionary, "StaminaTime", 0u);
@@ -968,7 +968,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			}
 			if (dictionary.ContainsKey("IgnoredPlayers"))
 			{
-				DeserializeIgnoredPlayers((object[])dictionary["IgnoredPlayers"]);
+				DeserializeIgnoredPlayers(dictionary["IgnoredPlayers"]);
 			}
 			if (dictionary.ContainsKey("Sales"))
 			{
@@ -1020,7 +1020,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			int unixTime = GetUnixTime(utcNow);
 			if (dictionary.ContainsKey("LastAccessUTC"))
 			{
-				int num2 = (int)dictionary["LastAccessUTC"];
+				int num2 = Convert.ToInt32(dictionary["LastAccessUTC"]);
 				int diff = unixTime - num2;
 			}
 			SaveData.LastAccessUTC = unixTime;
@@ -1046,6 +1046,7 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 
 	public void InitNewSaveFile()
 	{
+		Debug.LogWarning("[PROFILE_STORAGE] InitNewSaveFile: creating fresh profile (currency will be reset)");
 		NewSession = true;
 		// Init can run after a failed deserialize on a non-empty SaveData instance.
 		// Ensure deterministic "new save" state and avoid duplicate-key exceptions.
@@ -1480,14 +1481,32 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		return stringBuilder.ToString();
 	}
 
-	private void DeserializeIgnoredPlayers(object[] playerArray)
+	private void DeserializeIgnoredPlayers(object data)
 	{
 		SaveData.IgnoredPlayers.Clear();
-		foreach (object obj in playerArray)
+		if (data == null)
 		{
-			SaveData.IgnoredPlayers.Add(Convert.ToString(obj), null);
+			return;
 		}
+		if (data is object[])
+		{
+			foreach (object obj in (object[])data)
+			{
+				SaveData.IgnoredPlayers[Convert.ToString(obj)] = null;
+			}
+			return;
+		}
+		if (data is Dictionary<string, object>)
+		{
+			foreach (KeyValuePair<string, object> item in (Dictionary<string, object>)data)
+			{
+				SaveData.IgnoredPlayers[item.Key] = null;
+			}
+			return;
+		}
+		Debug.LogWarning("[PROFILE_FLOW] DeserializeIgnoredPlayers unexpected type: " + data.GetType().FullName);
 	}
+
 
 	private string SerializeSales()
 	{
@@ -2122,27 +2141,16 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		}
 	}
 
-	private void CheckSimpleHacking()
-	{
-		if (SaveData.PaidHardCurrency >= MiscParams.PvPHackThreshold || SaveData.FreeHardCurrency >= MiscParams.PvPHackThreshold)
-		{
-			SaveData.PvpSpecialDomainNumber = 1;
-			SaveData.ChatSpecialDomainNumber = 1;
-		}
-
-		SaveData.ReadWriteParam = 1981;
-	}
-
 	public void SaveLocal()
 	{
-		CheckSimpleHacking();
 		string gameStateJson = Serialize();
+		Debug.Log(string.Format("[PROFILE_STORAGE] SaveLocal: paid={0} free={1} pvp={2} soft={3}",
+			SaveData?.PaidHardCurrency, SaveData?.FreeHardCurrency, SaveData?.PvPCurrency, SaveData?.SoftCurrency));
 		SessionManager.Instance.SetGameStateJson(gameStateJson);
 	}
 
 	public void Save(SessionManager.OnSaveDelegate callback = null)
 	{
-		CheckSimpleHacking();
 		string text = Serialize();
 		SessionManager.Instance.SetGameStateJson(text);
 		StartCoroutine(CoroutineRemoteSave(text, callback));
@@ -2223,24 +2231,32 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		{
 			flag = false;
 		}
+		Debug.Log(string.Format("[PROFILE_STORAGE] Load() json present={0} length={1}", flag, json?.Length ?? 0));
 		if (flag)
 		{
 			//if the game fails to deserialize than just make a new save
 			try
 			{
 				Singleton<PlayerInfoScript>.Instance.Deserialize(json);
+				PlayerSaveData sd = Singleton<PlayerInfoScript>.Instance.SaveData;
+				Debug.Log(string.Format("[PROFILE_STORAGE] Load() Deserialize OK: paid={0} free={1} pvp={2} soft={3}",
+					sd?.PaidHardCurrency, sd?.FreeHardCurrency, sd?.PvPCurrency, sd?.SoftCurrency));
 			}
-			catch
+			catch (Exception ex)
 			{
+				Debug.LogWarning("[PROFILE_STORAGE] Load() Deserialize FAILED (" + ex.GetType().Name + ": " + ex.Message + ") -> InitNewSaveFile\n" + ex);
 				Singleton<PlayerInfoScript>.Instance.InitNewSaveFile();
 			}
 		}
 		else
 		{
+			Debug.LogWarning("[PROFILE_STORAGE] Load() no json -> InitNewSaveFile");
 			Singleton<PlayerInfoScript>.Instance.InitNewSaveFile();
 		}
 		// TODO_REMOVE_AFTER_REFAC: apply same debug bypass to existing local saves too.
+		Debug.Log(string.Format("[PROFILE_FLOW] Load() BEFORE DebugBypass paid={0} free={1} hard={2} soft={3} pvp={4}", Singleton<PlayerInfoScript>.Instance.SaveData?.PaidHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.FreeHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.HardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.SoftCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.PvPCurrency));
 		Singleton<PlayerInfoScript>.Instance.ApplyDebugUnlockedProfileBypassForNewLocalSave();
+		Debug.Log(string.Format("[PROFILE_FLOW] Load() AFTER DebugBypass paid={0} free={1} hard={2} soft={3} pvp={4}", Singleton<PlayerInfoScript>.Instance.SaveData?.PaidHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.FreeHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.HardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.SoftCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.PvPCurrency));
 		DetachedSingleton<MissionManager>.Instance.AssignGlobalMissions();
 	}
 
@@ -3288,3 +3304,4 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		}
 	}
 }
+
