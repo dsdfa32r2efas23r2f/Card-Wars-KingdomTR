@@ -41,6 +41,29 @@ public class PlayerSaveData
 
 	public const int TIER_FREE = 9;
 
+	private const string UUID_KEY1 = "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5";
+
+	private const string UUID_KEY2 = "d98fF48f_B352#4914*85F1_5e34aB7C#cf47";
+
+	private const string UUID_KEY3 = "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499";
+
+	private const string UUID_KEY4 = "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE";
+
+	public const int DEFAULT1 = 41592;
+
+	public const int DEFAULT2 = 65358;
+
+	public const int DEFAULT3 = 97932;
+
+	public const int DEFAULT4 = 38462;
+
+	private const string FRDPAS_KEY = "ffbdh41e9_54fabaeb7ea530016faxg4aimc";
+
+	private const string FRDPAR_KEY = "5424493204pemhi3148ifmanseu4iksdf4_4";
+
+	private const string FRDPCS_KEY = "ffbd#41e5_94fabbeb7ea530916fax4hainc";
+
+	private const string FRDPCR_KEY = "5bill6535897assa860955058223172534_4";
 
 	public int version;
 
@@ -186,6 +209,16 @@ public class PlayerSaveData
 
 	private int __FreeHardCurrency;
 
+	private int _Yuryo;
+
+	private int _Harai;
+
+	private int _Tada;
+
+	private int _Muryo;
+
+	private int _ReadWriteParam = 1981;
+
 	private int _PvPCurrency;
 
 	public CalendarTable ActiveCalendar;
@@ -305,6 +338,50 @@ public class PlayerSaveData
 		}
 	}
 
+	public int Yuryo
+	{
+		get
+		{
+			return _Yuryo;
+		}
+	}
+
+	public int Harai
+	{
+		get
+		{
+			return _Harai;
+		}
+	}
+
+	public int Tada
+	{
+		get
+		{
+			return _Tada;
+		}
+	}
+
+	public int Muryo
+	{
+		get
+		{
+			return _Muryo;
+		}
+	}
+
+	public int ReadWriteParam
+	{
+		get
+		{
+			return _ReadWriteParam;
+		}
+		set
+		{
+			_ReadWriteParam = value;
+		}
+	}
+
 	public int PvPCurrency
 	{
 		get
@@ -404,18 +481,84 @@ public class PlayerSaveData
 
 	public void ModifyPaidHardCurrency(int value, bool absolute = false)
 	{
-		if (absolute)
+		int hashSHORT = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+		if ((!absolute && hashSHORT != _Yuryo) || (int)_PaidHardCurrency > MiscParams.PvPHackThreshold)
+		{
+			if (MiscParams.HarderHashCheck)
+			{
+				PvpSpecialDomainNumber = 1;
+				_PaidHardCurrency = 0;
+				_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+			}
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+		}
+		else if (absolute && value > MiscParams.PvPHackThreshold)
+		{
+			if (MiscParams.HarderHashCheck)
+			{
+				PvpSpecialDomainNumber = 1;
+				_PaidHardCurrency = 0;
+				_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+			}
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+		}
+		else if (absolute)
+		{
 			_PaidHardCurrency = value;
+		}
 		else
-			_PaidHardCurrency += value;
+		{
+			_PaidHardCurrency = (int)_PaidHardCurrency + value;
+		}
+		_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+		_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
 	}
 
 	public void ModifyFreeHardCurrency(int value, bool absolute = false)
 	{
-		if (absolute)
+		int hashSHORT = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+		if ((!absolute && hashSHORT != _Tada) || (int)_FreeHardCurrency > MiscParams.PvPHackThreshold)
+		{
+			if (MiscParams.HarderHashCheck)
+			{
+				PvpSpecialDomainNumber = 1;
+				_PaidHardCurrency = 0;
+				_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+			}
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+		}
+		else if ((int)_FreeHardCurrency > MiscParams.PvPHackThreshold)
+		{
+			if (MiscParams.HarderHashCheck)
+			{
+				PvpSpecialDomainNumber = 1;
+				_PaidHardCurrency = 0;
+				_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+			}
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+		}
+		else if (absolute)
+		{
 			_FreeHardCurrency = value;
+		}
 		else
-			_FreeHardCurrency += value;
+		{
+			_FreeHardCurrency = (int)_FreeHardCurrency + value;
+		}
+		_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+		_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
 	}
 
 	public void AddHardCurrency(int paid, int free, string eventName, string countrycode = null, string price = null)
@@ -465,6 +608,72 @@ public class PlayerSaveData
 	{
 		ModifyPaidHardCurrency(paid, true);
 		ModifyFreeHardCurrency(free, true);
+	}
+
+	public void ManualSetCurrencyHash(int paid, int free)
+	{
+		if (paid == 41592 && free == 65358)
+		{
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+			return;
+		}
+		if ((int)_PaidHardCurrency != 0)
+		{
+			int hashSHORT = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			if (hashSHORT != paid)
+			{
+				if (MiscParams.HarderHashCheck)
+				{
+					PvpSpecialDomainNumber = 1;
+					_PaidHardCurrency = 0;
+					_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+				}
+				_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+				_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+				_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+				_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+			}
+			else
+			{
+				_Yuryo = paid;
+				_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+			}
+		}
+		else
+		{
+			_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+			_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+		}
+		if ((int)_FreeHardCurrency != GachaSlotDataManager.PremiumGachaCost)
+		{
+			int hashSHORT2 = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			if (hashSHORT2 != free)
+			{
+				if (MiscParams.HarderHashCheck)
+				{
+					PvpSpecialDomainNumber = 1;
+					_PaidHardCurrency = 0;
+					_FreeHardCurrency = GachaSlotDataManager.PremiumGachaCost;
+				}
+				_Yuryo = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "DbbDC9d5#5087*4B32_83Ed?bD772a71766C5");
+				_Harai = GetHashSHORT(Convert.ToString(_PaidHardCurrency), "B9fdD61a*71C5_4Ae7#83e8#B63bE6a9F0499");
+				_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+				_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+			}
+			else
+			{
+				_Tada = free;
+				_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+			}
+		}
+		else
+		{
+			_Tada = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "d98fF48f_B352#4914*85F1_5e34aB7C#cf47");
+			_Muryo = GetHashSHORT(Convert.ToString(_FreeHardCurrency), "2dE60E43#3767a436f*89DD_A9Cd359#aE3eE");
+		}
 	}
 
 	public void AddEmptyAllySlots(int count)
@@ -983,6 +1192,40 @@ public class PlayerSaveData
 		}
 	}
 
+	public int GetHashSHORT(string sourcevalue, string key)
+	{
+		//Discarded unreachable code: IL_0071
+		using (HMACSHA1 hMACSHA = new HMACSHA1())
+		{
+			hMACSHA.Key = Encoding.UTF8.GetBytes(key);
+			byte[] array = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(sourcevalue));
+			StringBuilder stringBuilder = new StringBuilder();
+			int num = 3141;
+			for (int i = 0; i < array.Length; i++)
+			{
+				stringBuilder.AppendFormat("{0:X2}", array[i]);
+				num += array[i];
+			}
+			return num;
+		}
+	}
+
+	public string GetHashSTRING(string sourcevalue, string key)
+	{
+		//Discarded unreachable code: IL_0064
+		using (HMACSHA256 hMACSHA = new HMACSHA256())
+		{
+			hMACSHA.Key = Encoding.UTF8.GetBytes(key);
+			byte[] array = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(sourcevalue));
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int i = 0; i < array.Length; i++)
+			{
+				stringBuilder.AppendFormat("{0:X2}", array[i]);
+			}
+			return stringBuilder.ToString();
+		}
+	}
+
 	public string GetSHA256STRINGASCII(string sourcevalue)
 	{
 		SHA256 sHA = SHA256.Create();
@@ -1030,7 +1273,12 @@ public class PlayerSaveData
 			{
 			}
 		};
-		session.Server.User_currency_history(country, transaction, tier, _PaidHardCurrency, _FreeHardCurrency, callback);
+		string country2 = country;
+		if ((int)_PaidHardCurrency > MiscParams.PvPHackThreshold || (int)_FreeHardCurrency > MiscParams.PvPHackThreshold)
+		{
+			country2 = "ZE";
+		}
+		session.Server.User_currency_history(country2, transaction, tier, _PaidHardCurrency, _FreeHardCurrency, callback);
 	}
 
 	public void DoNotCall(Session session)
@@ -1050,6 +1298,7 @@ public class PlayerSaveData
 
 	public void AddHardCurrency2(int paid, int free, string eventName, int handle, string countrycode, string price, ActionCallback callback)
 	{
+		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		Session theSession = SessionManager.Instance.theSession;
 		string empty = string.Empty;
 		if (paid > 0)
@@ -1114,12 +1363,12 @@ public class PlayerSaveData
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num2 = Convert.ToInt32(dictionary2["level1"]);
-							ModifyPaidHardCurrency(num2, true);
+							_PaidHardCurrency = num2;
 						}
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
 						{
 							int num3 = Convert.ToInt32(dictionary2["level2"]);
-							ModifyFreeHardCurrency(num3, true);
+							_FreeHardCurrency = num3;
 						}
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
 						{
@@ -1136,11 +1385,12 @@ public class PlayerSaveData
 				callback(actionResult);
 			}
 		};
-		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, paid, free, 0, string.Empty, handle, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, paid, free, 0, hashSTRING, handle, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
 	}
 
 	public void ConsumeHardCurrency2(int amount, string eventName, ActionCallback callback)
 	{
+		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
@@ -1153,12 +1403,12 @@ public class PlayerSaveData
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num3 = Convert.ToInt32(dictionary2["level1"]);
-							ModifyPaidHardCurrency(num3, true);
+							_PaidHardCurrency = num3;
 						}
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
 						{
 							int num4 = Convert.ToInt32(dictionary2["level2"]);
-							ModifyFreeHardCurrency(num4, true);
+							_FreeHardCurrency = num4;
 						}
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
 						{
@@ -1196,11 +1446,12 @@ public class PlayerSaveData
 		{
 			LogUserTransactionServerHistory(theSession, Singleton<TBPvPManager>.Instance.CountryCode, -num2, 9);
 		}
-		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, -num, -num2, 0, string.Empty, -1, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, -num, -num2, 0, hashSTRING, -1, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
 	}
 
 	public void ConsumeHardCurrencyCustom(int amount, string eventName, ActionCallback callback)
 	{
+		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
 			ActionResult actionResult = new ActionResult();
@@ -1210,21 +1461,31 @@ public class PlayerSaveData
 				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
 				if (dictionary2 != null)
 				{
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
-					{
-						int num = Convert.ToInt32(dictionary2["level1"]);
-						ModifyPaidHardCurrency(num, true);
-					}
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
-					{
-						int num2 = Convert.ToInt32(dictionary2["level2"]);
-						ModifyFreeHardCurrency(num2, true);
-					}
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
-					{
-						int num3 = Convert.ToInt32(dictionary2["level3"]);
-						CustomizationCurrency = num3;
-					}
+						string key = "5424493204pemhi3148ifmanseu4iksdf4_4" + SessionManager.Instance.PlayerID + "0";
+						string hashSTRING2 = GetHashSTRING(SessionManager.Instance.PlayerID, key);
+						string text2 = Convert.ToString(dictionary2["handle"]);
+						if (hashSTRING2.ToLower() != text2.ToLower())
+						{
+							actionResult.success = false;
+						}
+						else
+						{
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
+							{
+								int num = Convert.ToInt32(dictionary2["level1"]);
+								_PaidHardCurrency = num;
+							}
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
+							{
+								int num2 = Convert.ToInt32(dictionary2["level2"]);
+								_FreeHardCurrency = num2;
+							}
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
+							{
+								int num3 = Convert.ToInt32(dictionary2["level3"]);
+								CustomizationCurrency = num3;
+							}
+						}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1236,11 +1497,12 @@ public class PlayerSaveData
 			}
 		};
 		Session theSession = SessionManager.Instance.theSession;
-		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, 0, 0, -amount, string.Empty, -1, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, 0, 0, -amount, hashSTRING, -1, 0, eventName, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
 	}
 
 	public void User_Action(int misc, ActionCallback callback)
 	{
+		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		Session theSession = SessionManager.Instance.theSession;
 		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
@@ -1250,21 +1512,31 @@ public class PlayerSaveData
 				Dictionary<string, object> dictionary2 = ExtractUserActionFields(data);
 				if (dictionary2 != null)
 				{
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
-					{
-						int num = Convert.ToInt32(dictionary2["level1"]);
-						ModifyPaidHardCurrency(num, true);
-					}
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
-					{
-						int num2 = Convert.ToInt32(dictionary2["level2"]);
-						ModifyFreeHardCurrency(num2, true);
-					}
-					if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
-					{
-						int num3 = Convert.ToInt32(dictionary2["level3"]);
-						CustomizationCurrency = num3;
-					}
+						string key = "5424493204pemhi3148ifmanseu4iksdf4_4" + SessionManager.Instance.PlayerID + Convert.ToString(misc);
+						string hashSTRING2 = GetHashSTRING(SessionManager.Instance.PlayerID, key);
+						string text2 = Convert.ToString(dictionary2["handle"]);
+						if (hashSTRING2.ToLower() != text2.ToLower())
+						{
+							actionResult.success = false;
+						}
+						else
+						{
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
+							{
+								int num = Convert.ToInt32(dictionary2["level1"]);
+								_PaidHardCurrency = num;
+							}
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
+							{
+								int num2 = Convert.ToInt32(dictionary2["level2"]);
+								_FreeHardCurrency = num2;
+							}
+							if (dictionary2.Count > 0 && dictionary2.ContainsKey("level3"))
+							{
+								int num3 = Convert.ToInt32(dictionary2["level3"]);
+								CustomizationCurrency = num3;
+							}
+						}
 				}
 				actionResult.success = true;
 				callback(actionResult);
@@ -1275,11 +1547,12 @@ public class PlayerSaveData
 				callback(actionResult);
 			}
 		};
-		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, 0, 0, 0, string.Empty, -1, misc, string.Empty, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+		theSession.Server.User_action(_PaidHardCurrency, _FreeHardCurrency, CustomizationCurrency, 0, 0, 0, hashSTRING, -1, misc, string.Empty, Singleton<TBPvPManager>.Instance.CountryCode, callback2);
 	}
 
 	public void User_Action2(int paid, int free, int flag, ActionCallback callback)
 	{
+		string hashSTRING = GetHashSTRING(SessionManager.Instance.PlayerID, "ffbdh41e9_54fabaeb7ea530016faxg4aimc" + SessionManager.Instance.PlayerID + _PaidHardCurrency.ToString() + _FreeHardCurrency.ToString());
 		Session theSession = SessionManager.Instance.theSession;
 		SQServer.JsonResponseHandler callback2 = delegate(Dictionary<string, object> data, HttpStatusCode status)
 		{
@@ -1292,12 +1565,12 @@ public class PlayerSaveData
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level1"))
 						{
 							int num = Convert.ToInt32(dictionary2["level1"]);
-							ModifyPaidHardCurrency(num, true);
+							_PaidHardCurrency = num;
 						}
 						if (dictionary2.Count > 0 && dictionary2.ContainsKey("level2"))
 						{
 							int num2 = Convert.ToInt32(dictionary2["level2"]);
-							ModifyFreeHardCurrency(num2, true);
+							_FreeHardCurrency = num2;
 						}
 				}
 				actionResult.success = true;
@@ -1315,7 +1588,7 @@ public class PlayerSaveData
 				}
 			}
 		};
-		theSession.Server.User_action(0, 0, 0, paid, free, 100, string.Empty, -1, flag, "debugmenu", Singleton<TBPvPManager>.Instance.CountryCode, callback2);
+		theSession.Server.User_action(0, 0, 0, paid, free, 100, hashSTRING, -1, flag, "debugmenu", Singleton<TBPvPManager>.Instance.CountryCode, callback2);
 	}
 
 	private static Dictionary<string, object> ExtractUserActionFields(Dictionary<string, object> data)

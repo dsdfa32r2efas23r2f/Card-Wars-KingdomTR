@@ -323,7 +323,6 @@ public class TownHudController : Singleton<TownHudController>
 
 	public void ClaimCompletedMission(Mission mission)
 	{
-		MetaBootstrap.Facade?.ApplyMissionRewardGrant(mission.Data.ID, mission.Data.HardCurrency, mission.Data.SocialCurrency, mission.Data.SoftCurrency);
 		PlayerSaveData saveData = Singleton<PlayerInfoScript>.Instance.SaveData;
 		saveData.SoftCurrency += mission.Data.SoftCurrency;
 		saveData.PvPCurrency += mission.Data.SocialCurrency;

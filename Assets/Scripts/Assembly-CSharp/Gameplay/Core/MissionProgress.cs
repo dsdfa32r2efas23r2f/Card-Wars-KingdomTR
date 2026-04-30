@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -213,7 +212,7 @@ public class MissionProgress
 	{
 		if (dict.ContainsKey(key))
 		{
-			return Convert.ToInt32(dict[key]);
+			return (int)dict[key];
 		}
 		return 0;
 	}
@@ -222,10 +221,10 @@ public class MissionProgress
 	{
 		if (dict.ContainsKey(key))
 		{
-			object[] array2 = (object[])dict[key];
-			for (int i = 0; i < array2.Length && i < array.Length; i++)
+			int[] array2 = (int[])dict[key];
+			for (int i = 0; i < array2.Length; i++)
 			{
-				array[i] = Convert.ToInt32(array2[i]);
+				array[i] = array2[i];
 			}
 		}
 	}
