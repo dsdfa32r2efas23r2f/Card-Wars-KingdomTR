@@ -1357,7 +1357,6 @@ public class PlayerState
 		CreatureState attacker = attackProgress.Attacker;
 		if (attackProgress.AttacksTaken == 0)
 		{
-			SyncRefactorAttackCostForUser(attacker.AttackCost, attackProgress.Cause);
 			SpendActionPoints(attacker.AttackCost);
 			AttackMessage(attacker, GameEvent.ATTACK_START);
 		}
@@ -1417,25 +1416,6 @@ public class PlayerState
 			CheckZeroAP();
 		}
 		AttackProgress.Attacks.RemoveAt(0);
-	}
-
-	// TODO_REFAC: remove once AP source-of-truth is fully moved to battle-core.
-	private void SyncRefactorAttackCostForUser(int attackCost, AttackCause cause)
-	{
-		if (Type != PlayerType.User || attackCost <= 0)
-		{
-			return;
-		}
-		DWGame instance = Singleton<DWGame>.Instance;
-		if (instance == null)
-		{
-			return;
-		}
-		bool applied = instance.TrySpendUserActionPointsRefactor(attackCost);
-		if (!applied)
-		{
-			Debug.LogWarning("[REFAC_AP_SYNC] Failed to apply attack AP spend in battle-core facade. cause=" + cause + ", cost=" + attackCost);
-		}
 	}
 
 	public void ProcessCardPlay(CardData Card, int LaneIndex, PlayerType targetPlayer)
