@@ -463,10 +463,8 @@ public class PlayerSaveData
 
 	public void ManualSetHardCurrency(int paid, int free)
 	{
-		Debug.Log(string.Format("[PROFILE_FLOW] ManualSetHardCurrency BEFORE paid={0} free={1} hard={2} -> incoming paid={3} free={4}", _PaidHardCurrency, _FreeHardCurrency, HardCurrency, paid, free));
 		ModifyPaidHardCurrency(paid, true);
 		ModifyFreeHardCurrency(free, true);
-		Debug.Log(string.Format("[PROFILE_FLOW] ManualSetHardCurrency AFTER paid={0} free={1} hard={2}", _PaidHardCurrency, _FreeHardCurrency, HardCurrency));
 	}
 
 	public void AddEmptyAllySlots(int count)

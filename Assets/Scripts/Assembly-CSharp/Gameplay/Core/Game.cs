@@ -238,7 +238,6 @@ public class Game
 	{
 		string text = gameFile;
 		Debug.Log("Gamefile location: " + text);
-		Debug.Log("[PROFILE_STORAGE] LoadLocally: file=" + text + " exists=" + System.IO.File.Exists(text));
 		string text2 = TFUtils.ReadFile(text);
 		string contents = LocalJsonUtils.NormalizeLikelyJson(text2);
 		if (!string.Equals(text2, contents, StringComparison.Ordinal))
@@ -249,7 +248,6 @@ public class Game
 		{
 			return contents;
 		}
-		Debug.LogWarning("[PROFILE_STORAGE] Local save is not valid JSON.");
 		return contents;
 	}
 

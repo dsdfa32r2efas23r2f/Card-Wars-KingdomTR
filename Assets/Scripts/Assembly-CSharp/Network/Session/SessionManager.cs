@@ -266,7 +266,6 @@ public class SessionManager : Singleton<SessionManager>
 
 	public void SetGameStateJson(string gameData)
 	{
-		Debug.Log(string.Format("[PROFILE_FLOW] SessionManager.SetGameStateJson len={0} state={1}", (gameData != null) ? gameData.Length : 0, State));
 		if (session != null && session.TheGame != null)
 		{
 			session.TheGame.SaveLocally(gameData);
@@ -360,7 +359,6 @@ public class SessionManager : Singleton<SessionManager>
 		if (session != null && session.TheGame != null)
 		{
 			string json = session.TheGame.LoadLocally();
-			Debug.Log(string.Format("[PROFILE_FLOW] SessionManager.GetGameStateJson len={0} state={1}", (json != null) ? json.Length : 0, State));
 			return json;
 		}
 		return null;

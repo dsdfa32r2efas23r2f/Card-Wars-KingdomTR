@@ -323,8 +323,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			}
 			else
 			{
-				Debug.Log(string.Format("[PROFILE_STORAGE] Currency server call SUCCESS type={0} -> SaveLocal paid={1} free={2}",
-					whichType, SaveData?.PaidHardCurrency, SaveData?.FreeHardCurrency));
 				Singleton<StoreScreenController>.Instance.TriggerHardCurrencyGainTick();
 			}
 			SaveLocal();
@@ -760,8 +758,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			SaveData.CustomizationCurrency = TFUtils.LoadInt(dictionary, "CustomizationCurrency", 0);
 			int _dPaid = TFUtils.LoadInt(dictionary, "PaidHardCurrency", 0);
 		int _dFree = TFUtils.LoadInt(dictionary, "FreeHardCurrency", 0);
-		Debug.Log(string.Format("[PROFILE_STORAGE] Deserialize: json has paid={0} free={1} soft={2} pvp={3}",
-			_dPaid, _dFree, TFUtils.LoadInt(dictionary, "SoftCurrency", 0), TFUtils.LoadInt(dictionary, "PvpCurrency", 0)));
 		SaveData.ManualSetHardCurrency(_dPaid, _dFree);
 			SaveData.PvPCurrency = TFUtils.LoadInt(dictionary, "PvpCurrency", 0);
 			SaveData.RankXP = TFUtils.LoadInt(dictionary, "RankXP", 0);
@@ -1046,7 +1042,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 
 	public void InitNewSaveFile()
 	{
-		Debug.LogWarning("[PROFILE_STORAGE] InitNewSaveFile: creating fresh profile (currency will be reset)");
 		NewSession = true;
 		// Init can run after a failed deserialize on a non-empty SaveData instance.
 		// Ensure deterministic "new save" state and avoid duplicate-key exceptions.
@@ -1504,7 +1499,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 			}
 			return;
 		}
-		Debug.LogWarning("[PROFILE_FLOW] DeserializeIgnoredPlayers unexpected type: " + data.GetType().FullName);
 	}
 
 
@@ -2144,8 +2138,6 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 	public void SaveLocal()
 	{
 		string gameStateJson = Serialize();
-		Debug.Log(string.Format("[PROFILE_STORAGE] SaveLocal: paid={0} free={1} pvp={2} soft={3}",
-			SaveData?.PaidHardCurrency, SaveData?.FreeHardCurrency, SaveData?.PvPCurrency, SaveData?.SoftCurrency));
 		SessionManager.Instance.SetGameStateJson(gameStateJson);
 	}
 
@@ -2187,9 +2179,8 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 					saveSuccess = success;
 				});
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				Exception e2 = ex;
 				isSaveComplete = true;
 			}
 			DateTime timeoutTime = TFUtils.ServerTime + SAVE_TIMEOUT_TIME;
@@ -2231,32 +2222,24 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		{
 			flag = false;
 		}
-		Debug.Log(string.Format("[PROFILE_STORAGE] Load() json present={0} length={1}", flag, json?.Length ?? 0));
 		if (flag)
 		{
 			//if the game fails to deserialize than just make a new save
 			try
 			{
 				Singleton<PlayerInfoScript>.Instance.Deserialize(json);
-				PlayerSaveData sd = Singleton<PlayerInfoScript>.Instance.SaveData;
-				Debug.Log(string.Format("[PROFILE_STORAGE] Load() Deserialize OK: paid={0} free={1} pvp={2} soft={3}",
-					sd?.PaidHardCurrency, sd?.FreeHardCurrency, sd?.PvPCurrency, sd?.SoftCurrency));
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				Debug.LogWarning("[PROFILE_STORAGE] Load() Deserialize FAILED (" + ex.GetType().Name + ": " + ex.Message + ") -> InitNewSaveFile\n" + ex);
 				Singleton<PlayerInfoScript>.Instance.InitNewSaveFile();
 			}
 		}
 		else
 		{
-			Debug.LogWarning("[PROFILE_STORAGE] Load() no json -> InitNewSaveFile");
 			Singleton<PlayerInfoScript>.Instance.InitNewSaveFile();
 		}
 		// TODO_REMOVE_AFTER_REFAC: apply same debug bypass to existing local saves too.
-		Debug.Log(string.Format("[PROFILE_FLOW] Load() BEFORE DebugBypass paid={0} free={1} hard={2} soft={3} pvp={4}", Singleton<PlayerInfoScript>.Instance.SaveData?.PaidHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.FreeHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.HardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.SoftCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.PvPCurrency));
 		Singleton<PlayerInfoScript>.Instance.ApplyDebugUnlockedProfileBypassForNewLocalSave();
-		Debug.Log(string.Format("[PROFILE_FLOW] Load() AFTER DebugBypass paid={0} free={1} hard={2} soft={3} pvp={4}", Singleton<PlayerInfoScript>.Instance.SaveData?.PaidHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.FreeHardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.HardCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.SoftCurrency, Singleton<PlayerInfoScript>.Instance.SaveData?.PvPCurrency));
 		DetachedSingleton<MissionManager>.Instance.AssignGlobalMissions();
 	}
 
@@ -3304,4 +3287,5 @@ public class PlayerInfoScript : Singleton<PlayerInfoScript>
 		}
 	}
 }
+
 
